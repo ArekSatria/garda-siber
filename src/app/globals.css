@@ -1,26 +1,49 @@
+/* Mengimpor mesin utama Tailwind v4 */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Di sinilah kita menggantikan peran tailwind.config.ts */
+@theme {
+  /* Warna biru utama (Hero Banner) */
+  --color-primary: #0B57D0;
+  --color-primary-hover: #0842A0;
+  --color-primary-light: #D3E3FD;
+  
+  /* Merah untuk ancaman Tinggi */
+  --color-danger: #B3261E;
+  --color-danger-light: #F9DEDC;
+  
+  /* Oranye/Kuning untuk ancaman Sedang */
+  --color-warning: #B06000;
+  --color-warning-light: #FFEFD8;
+  
+  /* Hijau untuk ancaman Rendah */
+  --color-success: #146C2E;
+  --color-success-light: #C4EED0;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* ================= CYBER 3D ROTATION ANIMATION ================= */
+  /* Daftarkan kelas animasi baru: Berputar 3D + Melayang Lambat */
+  --animate-siber-rotate: siber3DRotate 12s linear infinite;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes siber3DRotate {
+    0% {
+      transform: translateY(0px) rotateY(0deg);
+      filter: drop-shadow(0 10px 15px rgba(11, 87, 208, 0.2));
+    }
+    25% {
+      transform: translateY(-8px) rotateY(90deg);
+      filter: drop-shadow(5px 15px 25px rgba(11, 87, 208, 0.4));
+    }
+    50% {
+      transform: translateY(0px) rotateY(180deg);
+      filter: drop-shadow(0 10px 15px rgba(11, 87, 208, 0.2));
+    }
+    75% {
+      transform: translateY(-8px) rotateY(270deg);
+      filter: drop-shadow(-5px 15px 25px rgba(11, 87, 208, 0.4));
+    }
+    100% {
+      transform: translateY(0px) rotateY(360deg);
+      filter: drop-shadow(0 10px 15px rgba(11, 87, 208, 0.2));
+    }
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
