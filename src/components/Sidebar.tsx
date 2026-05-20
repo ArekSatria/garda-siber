@@ -30,10 +30,10 @@ export default function Sidebar() {
           <div>
             <h1 className="font-extrabold text-slate-900 text-lg leading-none">
               GARDA
+              <p className="text-primary font-extrabold tracking-widest uppercase">
+                SIBER
+              </p>
             </h1>
-            <p className="text-primary font-bold text-[10px] tracking-widest uppercase">
-              Siber
-            </p>
           </div>
         </Link>
       </div>
@@ -58,12 +58,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      <div className="pt-6 border-t border-slate-50">
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-500 transition-colors font-bold text-sm">
-          <LogOut size={20} /> Keluar
-        </button>
-      </div>
     </aside>
   );
 }
