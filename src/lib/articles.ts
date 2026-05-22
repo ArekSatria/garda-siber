@@ -6,21 +6,36 @@ import MarkdownIt from "markdown-it";
 const md = new MarkdownIt({ html: true, linkify: true, typography: true });
 const contentDirectory = path.join(process.cwd(), "src/content");
 
-export function getLatestArticles() {
+export interface ArticleMeta {
+  slug: string;
+  title: string;
+  category: string;
+  iconName: string;
+  iconBg: string;
+  date: string;
+  summary: string;
+  author: string;
+  readTime: string;
+  bannerImg: string;
+}
+
+export interface ArticleData extends ArticleMeta {
+  contentHtml: string;
+}
+
+function getAllFiles(): ArticleMeta[] {
   if (!fs.existsSync(contentDirectory)) {
     fs.mkdirSync(contentDirectory, { recursive: true });
     return [];
   }
 
-  const fileNames = fs.readdirSync(contentDirectory);
-
-  const allArticles = fileNames
-    .filter((fileName) => fileName.endsWith(".md"))
+  return fs
+    .readdirSync(contentDirectory)
+    .filter((f) => f.endsWith(".md"))
     .map((fileName) => {
       const slug = fileName.replace(/\.md$/, "");
       const fullPath = path.join(contentDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { data } = matter(fileContents);
+      const { data } = matter(fs.readFileSync(fullPath, "utf8"));
 
       return {
         slug,
@@ -28,20 +43,21 @@ export function getLatestArticles() {
         category: data.category || "Umum",
         iconName: data.iconName || "FileText",
         iconBg: data.iconBg || "bg-slate-50 text-slate-600",
-        date: data.date || "2000-01-01", // Default tanggal lama jika lupa isi
+        date: data.date || "2000-01-01",
+        summary: data.summary || "",
+        author: data.author || "Tim Garda Siber",
+        readTime: data.readTime || "5 Menit Baca",
+        bannerImg: data.bannerImg || "/images/password.jpg",
       };
-    });
-
-  // --- LOGIKA PENGURUTAN (SORTING) ---
-  // Mengurutkan dari tanggal terbaru ke terlama
-  return allArticles.sort((a, b) => {
-    if (a.date < b.date) return 1;
-    if (a.date > b.date) return -1;
-    return 0;
-  });
+    })
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
-export function getArticleData(slug: string) {
+export function getLatestArticles(): ArticleMeta[] {
+  return getAllFiles();
+}
+
+export function getArticleData(slug: string): ArticleData | null {
   try {
     const fullPath = path.join(contentDirectory, `${slug}.md`);
     if (!fs.existsSync(fullPath)) return null;
@@ -57,8 +73,13 @@ export function getArticleData(slug: string) {
       category: data.category || "Umum",
       iconName: data.iconName || "FileText",
       iconBg: data.iconBg || "bg-slate-50 text-slate-600",
+      date: data.date || "2000-01-01",
+      summary: data.summary || "",
+      author: data.author || "Tim Garda Siber",
+      readTime: data.readTime || "5 Menit Baca",
+      bannerImg: data.bannerImg || "/images/password.jpg",
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

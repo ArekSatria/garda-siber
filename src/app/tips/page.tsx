@@ -1,4 +1,5 @@
 import Sidebar from "@/components/Sidebar";
+import type { Metadata } from "next";
 import {
   Lightbulb,
   CheckCircle2,
@@ -10,6 +11,12 @@ import {
   Globe,
   ChevronRight,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Tips Keamanan Digital",
+  description:
+    "Panduan praktis keamanan digital: cara aman mengelola akun, privasi media sosial, keamanan perangkat, dan transaksi digital.",
+};
 
 export default function TipsPage() {
   const securityTips = [

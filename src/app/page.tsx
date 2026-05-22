@@ -3,6 +3,7 @@
 import Sidebar from "@/components/Sidebar";
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 import {
   Search,
   Bell,
@@ -20,7 +21,12 @@ import {
   Check,
   ArrowRight,
   Shield,
+  Globe,
+  Server,
+  ShieldAlert,
 } from "lucide-react";
+
+import { getAllThreats } from "@/data/threats";
 
 export default function Home() {
   // State manajemen fungsionalitas profesional
@@ -67,41 +73,51 @@ export default function Home() {
     },
   ];
 
-  // Data tiruan untuk Ancaman Terkini
-  const currentThreats = [
-    {
-      title: "Phishing",
-      desc: "Email & SMS palsu",
-      level: "Tinggi",
+  // Data ancaman diambil dari sumber terpusat threats.ts
+  const iconMap: Record<string, React.ElementType> = {
+    Mail,
+    Lock,
+    Globe,
+    EyeOff,
+    Server,
+    Smartphone,
+  };
+  const levelMap: Record<
+    string,
+    { label: string; levelColor: string; iconBg: string }
+  > = {
+    Critical: {
+      label: "Kritis",
       levelColor: "text-red-600 bg-red-50",
-      icon: Mail,
       iconBg: "bg-red-50 text-red-600",
     },
-    {
-      title: "Ransomware",
-      desc: "Enkripsi file",
-      level: "Tinggi",
+    High: {
+      label: "Tinggi",
       levelColor: "text-red-600 bg-red-50",
-      icon: Lock,
       iconBg: "bg-orange-50 text-orange-600",
     },
-    {
-      title: "Penipuan online",
-      desc: "Toko & investasi palsu",
-      level: "Sedang",
+    Medium: {
+      label: "Sedang",
       levelColor: "text-orange-600 bg-orange-50",
-      icon: Wallet,
       iconBg: "bg-blue-50 text-blue-600",
     },
-    {
-      title: "Stalkerware",
-      desc: "Aplikasi pengintai",
-      level: "Rendah",
+    Low: {
+      label: "Rendah",
       levelColor: "text-green-600 bg-green-50",
-      icon: EyeOff,
       iconBg: "bg-green-50 text-green-600",
     },
-  ];
+  };
+  const currentThreats = getAllThreats()
+    .slice(0, 4)
+    .map((t) => ({
+      id: t.id,
+      title: t.title,
+      desc: t.shortDesc.split(" ").slice(0, 4).join(" "),
+      level: levelMap[t.level]?.label ?? t.level,
+      levelColor: levelMap[t.level]?.levelColor ?? "text-slate-600 bg-slate-50",
+      icon: iconMap[t.iconName] ?? ShieldAlert,
+      iconBg: levelMap[t.level]?.iconBg ?? "bg-slate-50 text-slate-600",
+    }));
 
   // Data tiruan untuk Kategori Tren
   const popularTopics = [
@@ -265,10 +281,12 @@ export default function Home() {
 
             {/* SISI KANAN: LOGO */}
             <div className="w-full md:w-[420px] h-48 md:h-64 relative flex items-center justify-center overflow-hidden mt-6 md:mt-0 z-10 [perspective:1000px]">
-              <img 
-                src="/images/logo-siber.png" 
+              <Image
+                src="/images/logo-siber.png"
                 alt="Logo Resmi Reserse Siber Polri"
-                className="w-full h-full object-contain animate-siber-rotate [transform-style:preserve-3d] will-change-transform select-none" 
+                fill
+                className="object-contain animate-siber-rotate [transform-style:preserve-3d] will-change-transform select-none"
+                priority
               />
             </div>
 
@@ -405,16 +423,17 @@ export default function Home() {
                 <div className="space-y-4">
                   {filteredThreats.length > 0 ? (
                     filteredThreats.map((threat, index) => (
-                      <div
+                      <Link
                         key={index}
-                        className="flex items-center justify-between border-b border-slate-50 pb-4 last:border-0 last:pb-0"
+                        href={`/ancaman/${threat.id}`}
+                        className="flex items-center justify-between border-b border-slate-50 pb-4 last:border-0 last:pb-0 hover:bg-slate-50 px-2 -mx-2 rounded-xl transition-colors cursor-pointer group"
                       >
                         <div className="flex gap-3 items-center">
                           <div className={`p-2.5 rounded-xl ${threat.iconBg}`}>
                             <threat.icon size={20} />
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 text-sm">
+                            <h4 className="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">
                               {threat.title}
                             </h4>
                             <p className="text-xs text-slate-500 mt-0.5 font-medium">
@@ -427,7 +446,7 @@ export default function Home() {
                         >
                           {threat.level}
                         </span>
-                      </div>
+                      </Link>
                     ))
                   ) : (
                     <div className="text-center py-4 text-slate-400 text-xs font-bold">
