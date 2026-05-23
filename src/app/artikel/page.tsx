@@ -1,6 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
 import {
   Search,
   Lock,
@@ -251,6 +252,7 @@ export default function ArtikelHubPage() {
             )}
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );

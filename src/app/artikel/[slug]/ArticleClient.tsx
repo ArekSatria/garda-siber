@@ -1,6 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
 import {
   ChevronLeft,
   Calendar,
@@ -159,6 +160,7 @@ export default function ArticleClient({ artikel, terkait }: Props) {
             </div>
           </aside>
         </div>
+        <Footer />
       </div>
     </div>
   );

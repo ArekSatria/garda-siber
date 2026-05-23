@@ -1,5 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import type { Metadata } from "next";
+import Footer from "@/components/Footer";
 import {
   Lightbulb,
   CheckCircle2,
@@ -130,6 +131,7 @@ export default function TipsPage() {
             </button>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );

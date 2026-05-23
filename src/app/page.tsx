@@ -1,6 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
@@ -496,6 +497,7 @@ export default function Home() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );
