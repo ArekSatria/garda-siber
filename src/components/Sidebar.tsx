@@ -7,7 +7,8 @@ import {
   ShieldAlert,
   Lightbulb,
   Info,
-  LogOut,
+  Brain,
+  FileText,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -15,9 +16,11 @@ export default function Sidebar() {
 
   const menuItems = [
     { name: "Beranda", icon: LayoutDashboard, path: "/" },
-    { name: "Jenis ancaman", icon: ShieldAlert, path: "/ancaman" },
-    { name: "Tips aman", icon: Lightbulb, path: "/tips" },
-    { name: "Tentang kami", icon: Info, path: "/tentang" },
+    { name: "Jenis Ancaman", icon: ShieldAlert, path: "/ancaman" },
+    { name: "Artikel", icon: FileText, path: "/artikel" },
+    { name: "Tips Aman", icon: Lightbulb, path: "/tips" },
+    { name: "Quiz Siber", icon: Brain, path: "/quiz" },
+    { name: "Tentang Kami", icon: Info, path: "/tentang" },
   ];
 
   return (
@@ -54,6 +57,11 @@ export default function Sidebar() {
             >
               <item.icon size={20} />
               <span className="text-sm">{item.name}</span>
+              {item.name === "Quiz Siber" && !isActive && (
+                <span className="ml-auto bg-[#0F52BA] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Baru
+                </span>
+              )}
             </Link>
           );
         })}
