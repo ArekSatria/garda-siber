@@ -116,20 +116,6 @@ export default function TipsPage() {
               </div>
             ))}
           </div>
-
-          {/* Banner Ajakan Bawah */}
-          <div className="mt-12 bg-primary rounded-3xl p-8 text-center text-white shadow-xl shadow-primary/20">
-            <h3 className="text-xl font-bold mb-2">
-              Punya pertanyaan tentang keamanan?
-            </h3>
-            <p className="text-primary-light mb-6 text-sm">
-              Tim kami siap membantu mengedukasi Anda lebih dalam mengenai
-              proteksi data.
-            </p>
-            <button className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-100 transition-all">
-              Hubungi Kami
-            </button>
-          </div>
         </main>
         <Footer />
       </div>
