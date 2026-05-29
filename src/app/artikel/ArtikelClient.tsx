@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { formatDate, type ArticleMeta } from "@/lib/articles";
 import type { ArticleMeta } from "@/lib/articles";
 
 const iconMap: Record<string, React.ElementType> = {

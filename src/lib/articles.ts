@@ -83,3 +83,23 @@ export function getArticleData(slug: string): ArticleData | null {
     return null;
   }
 }
+
+export function formatDate(dateStr: string): string {
+  const months = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+  const [year, month, day] = dateStr.split("-");
+  if (!year || !month || !day) return dateStr;
+  return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+}
