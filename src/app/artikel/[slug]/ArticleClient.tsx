@@ -2,6 +2,8 @@
 
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
 import {
   ChevronLeft,
   Calendar,
@@ -28,6 +30,58 @@ export default function ArticleClient({ artikel, terkait }: Props) {
   if (!artikel) return notFound();
 
   const art = artikel;
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function checkFavorite() {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      setUserId(user.id);
+
+      const { data } = await supabase
+        .from("favorites")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("article_slug", art.slug)
+        .single();
+
+      setIsFavorite(!!data);
+    }
+    checkFavorite();
+  }, [art.slug]);
+
+  async function handleToggleFavorite() {
+    if (!userId) {
+      window.location.href = "/login";
+      return;
+    }
+    setFavLoading(true);
+    const supabase = createClient();
+
+    if (isFavorite) {
+      await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", userId)
+        .eq("article_slug", art.slug);
+      setIsFavorite(false);
+    } else {
+      await supabase.from("favorites").insert({
+        user_id: userId,
+        article_slug: art.slug,
+        article_title: art.title,
+        article_category: art.category,
+        article_banner: art.bannerImg,
+      });
+      setIsFavorite(true);
+    }
+    setFavLoading(false);
+  }
 
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
@@ -42,8 +96,20 @@ export default function ArticleClient({ artikel, terkait }: Props) {
             <ChevronLeft size={16} /> Kembali ke Pusat Artikel
           </Link>
           <div className="flex items-center gap-3">
-            <button className="p-2 text-slate-400 hover:bg-slate-50 rounded-xl transition-colors">
-              <Bookmark size={18} />
+            <button
+              onClick={handleToggleFavorite}
+              disabled={favLoading}
+              className={`p-2 rounded-xl transition-colors ${
+                isFavorite
+                  ? "text-red-500 bg-red-50 hover:bg-red-100"
+                  : "text-slate-400 hover:bg-slate-50"
+              }`}
+              title={isFavorite ? "Hapus dari favorit" : "Simpan ke favorit"}
+            >
+              <Bookmark
+                size={18}
+                className={isFavorite ? "fill-red-500" : ""}
+              />
             </button>
             <button className="p-2 text-slate-400 hover:bg-slate-50 rounded-xl transition-colors">
               <Share2 size={18} />

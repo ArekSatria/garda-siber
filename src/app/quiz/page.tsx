@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import Link from "next/link";
 import { useState } from "react";
 import { quizQuestions, getScoreLabel } from "@/data/quizData";
+import { createClient } from "@/lib/supabase/client";
 import {
   ShieldAlert,
   CheckCircle2,
@@ -69,8 +70,25 @@ export default function QuizPage() {
       setConfirmed(false);
       setShowExplanation(false);
     } else {
-      setState("result");
-    }
+      if (current === totalQ - 1) {
+  const finalScore = [...newAnswers].filter(
+    (a, i) => a === questions[i].correctIndex
+  ).length;
+  const info = getScoreLabel(finalScore, totalQ);
+ const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await supabase.from("quiz_results").insert({
+      user_id: user.id,
+      score: finalScore,
+      total: totalQ,
+      label: info.label,
+      answers: newAnswers,
+    });
+  }
+  setState("result");
+  return;
+}
   }
 
   function handleReset() {
