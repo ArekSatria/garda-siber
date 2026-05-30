@@ -13,7 +13,6 @@ import {
   Trophy,
   RotateCcw,
   BookOpen,
-  ChevronRight,
   Brain,
   Clock,
   Target,
@@ -28,21 +27,21 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
-type QuizState = "intro" | "playing" | "review" | "result";
+type QuizState = "intro" | "playing" | "result";
 
 export default function QuizPage() {
- const [state, setState] = useState<QuizState>("intro");
- const [questions, setQuestions] = useState(quizQuestions);
- const [current, setCurrent] = useState(0);
- const [selected, setSelected] = useState<number | null>(null);
- const [confirmed, setConfirmed] = useState(false);
- const [answers, setAnswers] = useState<(number | null)[]>(
-   Array(quizQuestions.length).fill(null),
- );
- const [showExplanation, setShowExplanation] = useState(false);
+  const [state, setState] = useState<QuizState>("intro");
+  const [questions, setQuestions] = useState(quizQuestions);
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const [answers, setAnswers] = useState<(number | null)[]>(
+    Array(quizQuestions.length).fill(null),
+  );
+  const [showExplanation, setShowExplanation] = useState(false);
 
- const question = questions[current];
- const totalQ = questions.length;
+  const question = questions[current];
+  const totalQ = questions.length;
   const progress = (current / totalQ) * 100;
   const score = answers.filter(
     (a, i) => a === questions[i].correctIndex,
@@ -63,32 +62,53 @@ export default function QuizPage() {
     setShowExplanation(true);
   }
 
+  // ─── FIX: pisahkan save ke Supabase ke fungsi async sendiri ───────────────
+  async function saveResultToSupabase(
+    finalAnswers: (number | null)[],
+    finalScore: number,
+  ) {
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const info = getScoreLabel(finalScore, totalQ);
+      await supabase.from("quiz_results").insert({
+        user_id: user.id,
+        score: finalScore,
+        total: totalQ,
+        label: info.label,
+        answers: finalAnswers,
+      });
+    } catch (err) {
+      // Gagal simpan tidak boleh block user lihat hasil
+      console.error("Gagal menyimpan hasil quiz:", err);
+    }
+  }
+
+  // ─── FIX: handleNext sekarang murni sync, simpan hasil via fungsi terpisah ─
   function handleNext() {
     if (current < totalQ - 1) {
+      // Bukan soal terakhir — lanjut ke soal berikutnya
       setCurrent(current + 1);
       setSelected(null);
       setConfirmed(false);
       setShowExplanation(false);
     } else {
-      if (current === totalQ - 1) {
-  const finalScore = [...newAnswers].filter(
-    (a, i) => a === questions[i].correctIndex
-  ).length;
-  const info = getScoreLabel(finalScore, totalQ);
- const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    await supabase.from("quiz_results").insert({
-      user_id: user.id,
-      score: finalScore,
-      total: totalQ,
-      label: info.label,
-      answers: newAnswers,
-    });
-  }
-  setState("result");
-  return;
-}
+      // Soal terakhir — hitung skor final dari state answers terkini
+      // FIX: answers state sudah di-update di handleConfirm sebelum handleNext dipanggil
+      const finalScore = answers.filter(
+        (a, i) => a === questions[i].correctIndex,
+      ).length;
+
+      // Simpan ke Supabase secara async (fire-and-forget, tidak block UI)
+      saveResultToSupabase(answers, finalScore);
+
+      // Langsung tampilkan halaman hasil
+      setState("result");
+    }
   }
 
   function handleReset() {
@@ -401,7 +421,6 @@ export default function QuizPage() {
         {state === "result" && (
           <main className="flex-1 p-8">
             <div className="max-w-2xl mx-auto w-full space-y-6">
-              {/* Score card */}
               <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden">
                 <div className="bg-gradient-to-br from-[#0F52BA] to-blue-700 p-10 text-center text-white">
                   <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -414,9 +433,7 @@ export default function QuizPage() {
                     {score}
                     <span className="text-3xl text-blue-300">/{totalQ}</span>
                   </p>
-                  <p
-                    className={`text-xl font-black ${scoreInfo.color.replace("text-", "text-")} bg-white/10 px-4 py-1 rounded-full inline-block mt-2`}
-                  >
+                  <p className="text-xl font-black bg-white/10 px-4 py-1 rounded-full inline-block mt-2">
                     {scoreInfo.label}
                   </p>
                 </div>
@@ -426,7 +443,7 @@ export default function QuizPage() {
                     {scoreInfo.desc}
                   </p>
 
-                  {/* Review per soal */}
+                  {/* Rekap jawaban */}
                   <div className="space-y-3 mb-8">
                     <h3 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4">
                       Rekap Jawaban
