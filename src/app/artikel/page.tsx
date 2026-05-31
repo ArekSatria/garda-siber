@@ -1,5 +1,5 @@
-import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import PageLayout from "@/components/PageLayout";
 import { getLatestArticles } from "@/lib/articles";
 import type { Metadata } from "next";
 import ArtikelClient from "./ArtikelClient";
@@ -14,12 +14,9 @@ export default function ArtikelHubPage() {
   const articles = getLatestArticles();
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
-      <Sidebar />
-      <div className="flex-1 ml-64 flex flex-col min-w-0">
-        <ArtikelClient articles={articles} />
-        <Footer />
-      </div>
-    </div>
+    <PageLayout>
+      <ArtikelClient articles={articles} />
+      <Footer />
+    </PageLayout>
   );
 }

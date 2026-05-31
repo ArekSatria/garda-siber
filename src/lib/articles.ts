@@ -1,27 +1,20 @@
+// ============================================================
+// src/lib/articles.ts
+// PERUBAHAN: Import ArticleMeta & ArticleData dari @/types,
+// bukan define sendiri. Ini menghilangkan duplikasi tipe.
+// ============================================================
+
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
+import type { ArticleMeta, ArticleData } from "@/types";
+
+// Re-export agar import path lama tetap berjalan
+export type { ArticleMeta, ArticleData };
 
 const md = new MarkdownIt({ html: true, linkify: true, typography: true });
 const contentDirectory = path.join(process.cwd(), "src/content");
-
-export interface ArticleMeta {
-  slug: string;
-  title: string;
-  category: string;
-  iconName: string;
-  iconBg: string;
-  date: string;
-  summary: string;
-  author: string;
-  readTime: string;
-  bannerImg: string;
-}
-
-export interface ArticleData extends ArticleMeta {
-  contentHtml: string;
-}
 
 function getAllFiles(): ArticleMeta[] {
   if (!fs.existsSync(contentDirectory)) {
@@ -39,16 +32,16 @@ function getAllFiles(): ArticleMeta[] {
 
       return {
         slug,
-        title: data.title || "Tanpa Judul",
-        category: data.category || "Umum",
-        iconName: data.iconName || "FileText",
-        iconBg: data.iconBg || "bg-slate-50 text-slate-600",
-        date: data.date || "2000-01-01",
-        summary: data.summary || "",
-        author: data.author || "Tim Garda Siber",
-        readTime: data.readTime || "5 Menit Baca",
-        bannerImg: data.bannerImg || "/images/password.jpg",
-      };
+        title: data.title ?? "Tanpa Judul",
+        category: data.category ?? "Umum",
+        iconName: data.iconName ?? "FileText",
+        iconBg: data.iconBg ?? "bg-slate-50 text-slate-600",
+        date: data.date ?? "2000-01-01",
+        summary: data.summary ?? "",
+        author: data.author ?? "Tim Garda Siber",
+        readTime: data.readTime ?? "5 Menit Baca",
+        bannerImg: data.bannerImg ?? "/images/password.jpg",
+      } satisfies ArticleMeta;
     })
     .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
@@ -69,16 +62,16 @@ export function getArticleData(slug: string): ArticleData | null {
     return {
       slug,
       contentHtml,
-      title: data.title || "Tanpa Judul",
-      category: data.category || "Umum",
-      iconName: data.iconName || "FileText",
-      iconBg: data.iconBg || "bg-slate-50 text-slate-600",
-      date: data.date || "2000-01-01",
-      summary: data.summary || "",
-      author: data.author || "Tim Garda Siber",
-      readTime: data.readTime || "5 Menit Baca",
-      bannerImg: data.bannerImg || "/images/password.jpg",
-    };
+      title: data.title ?? "Tanpa Judul",
+      category: data.category ?? "Umum",
+      iconName: data.iconName ?? "FileText",
+      iconBg: data.iconBg ?? "bg-slate-50 text-slate-600",
+      date: data.date ?? "2000-01-01",
+      summary: data.summary ?? "",
+      author: data.author ?? "Tim Garda Siber",
+      readTime: data.readTime ?? "5 Menit Baca",
+      bannerImg: data.bannerImg ?? "/images/password.jpg",
+    } satisfies ArticleData;
   } catch {
     return null;
   }
