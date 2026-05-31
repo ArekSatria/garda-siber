@@ -15,6 +15,7 @@ import {
   LogOut,
   User,
   LayoutGrid,
+  Crown,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -24,39 +25,40 @@ export default function Sidebar() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  async function fetchProfile(userId: string) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("full_name, role")
+      .eq("id", userId)
+      .single();
+
+    if (!error && data) {
+      setProfile(data);
+    }
+  }
+
   useEffect(() => {
     const supabase = createClient();
 
-    async function getUser() {
+    async function init() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      setUser(user);
 
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("full_name, role")
-          .eq("id", user.id)
-          .single();
-        setProfile(data);
-      }
+      setUser(user);
+      if (user) await fetchProfile(user.id);
       setLoading(false);
     }
 
-    getUser();
+    init();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("full_name, role")
-          .eq("id", session.user.id)
-          .single();
-        setProfile(data);
+        await fetchProfile(session.user.id);
       } else {
         setProfile(null);
       }
@@ -80,6 +82,8 @@ export default function Sidebar() {
     { name: "Quiz Siber", icon: Brain, path: "/quiz" },
     { name: "Tentang Kami", icon: Info, path: "/tentang" },
   ];
+
+  const isAdmin = profile?.role === "admin";
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-slate-100 p-6 z-50 flex flex-col">
@@ -127,26 +131,35 @@ export default function Sidebar() {
           );
         })}
 
-        {/* Menu admin */}
-        {profile?.role === "admin" && (
-          <Link
-            href="/dashboard"
-            className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all text-sm ${
-              pathname.startsWith("/dashboard")
-                ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
-                : "text-purple-600 hover:bg-purple-50"
-            }`}
-          >
-            <LayoutGrid size={19} />
-            <span>Dashboard Admin</span>
-          </Link>
+        {/* Menu Admin — hanya muncul jika role = admin */}
+        {!loading && isAdmin && (
+          <>
+            <div className="pt-2 pb-1 px-4">
+              <div className="border-t border-slate-100" />
+            </div>
+            <Link
+              href="/dashboard"
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all text-sm ${
+                pathname.startsWith("/dashboard")
+                  ? "bg-violet-600 text-white shadow-lg shadow-violet-500/20 scale-[1.02]"
+                  : "text-violet-600 hover:bg-violet-50 border border-violet-200"
+              }`}
+            >
+              <LayoutGrid size={19} />
+              <span>Dashboard Admin</span>
+              <Crown size={13} className="ml-auto opacity-70" />
+            </Link>
+          </>
         )}
       </nav>
 
       {/* User section */}
       <div className="border-t border-slate-100 pt-4 mt-4">
         {loading ? (
-          <div className="h-12 bg-slate-50 rounded-2xl animate-pulse" />
+          <div className="space-y-2">
+            <div className="h-12 bg-slate-50 rounded-2xl animate-pulse" />
+            <div className="h-10 bg-slate-50 rounded-2xl animate-pulse" />
+          </div>
         ) : user ? (
           <div className="space-y-2">
             {/* Info user */}
@@ -154,18 +167,31 @@ export default function Sidebar() {
               href="/profil"
               className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-slate-50 transition-all group"
             >
-              <div className="w-9 h-9 bg-[#0F52BA] rounded-xl flex items-center justify-center shrink-0">
-                <User size={16} className="text-white" />
+              <div
+                className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                  isAdmin ? "bg-violet-600" : "bg-[#0F52BA]"
+                }`}
+              >
+                {isAdmin ? (
+                  <Crown size={15} className="text-white" />
+                ) : (
+                  <User size={16} className="text-white" />
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-slate-800 text-xs truncate">
                   {profile?.full_name || "Pengguna"}
                 </p>
-                <p className="text-[10px] text-slate-400 font-medium truncate">
-                  {profile?.role === "admin" ? "Administrator" : "Member"}
+                <p
+                  className={`text-[10px] font-bold truncate ${
+                    isAdmin ? "text-violet-500" : "text-slate-400"
+                  }`}
+                >
+                  {isAdmin ? "⚡ Administrator" : "Member"}
                 </p>
               </div>
             </Link>
+
             {/* Logout */}
             <button
               onClick={handleLogout}

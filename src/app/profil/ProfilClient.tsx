@@ -189,14 +189,28 @@ export default function ProfilClient({
                 <p className="text-blue-200 text-sm font-medium">
                   {profile.email}
                 </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">
-                    {profile.role === "admin" ? "Administrator" : "Member"}
-                  </span>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  {profile.role === "admin" ? (
+                    <span className="bg-violet-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest flex items-center gap-1">
+                      ⚡ Administrator
+                    </span>
+                  ) : (
+                    <span className="bg-white/20 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">
+                      Member
+                    </span>
+                  )}
                   <span className="text-blue-200 text-xs font-medium">
                     Bergabung {formatDate(profile.created_at)}
                   </span>
                 </div>
+                {profile.role === "admin" && (
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center gap-1.5 mt-2 text-xs text-violet-200 hover:text-white font-semibold underline underline-offset-2"
+                  >
+                    → Buka Admin Dashboard
+                  </Link>
+                )}
               </div>
             </div>
 

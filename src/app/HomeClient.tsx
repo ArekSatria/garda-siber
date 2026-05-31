@@ -2,6 +2,7 @@
 
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import ForbiddenBanner from "@/components/ForbiddenBanner";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
@@ -159,6 +160,7 @@ export default function HomeClient({ latestArticles }: Props) {
 
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
+      <ForbiddenBanner />
       <Sidebar />
       <div className="flex-1 ml-64 flex flex-col min-w-0">
         {/* HEADER BAR */}
