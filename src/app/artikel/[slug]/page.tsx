@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import ArticleClient from "./ArticleClient";
+import Footer from "@/components/Footer";
+import PageLayout from "@/components/PageLayout";
 import {
-  getArticleBySlug,
   getAllArticleSlugs,
-  getAllArticlesMeta,
+  getArticleBySlug,
+  getRelatedArticles,
 } from "@/lib/articles";
+import ArticleClient from "./ArticleClient";
 
 type PageProps = {
   params: Promise<{
@@ -15,7 +17,9 @@ type PageProps = {
 };
 
 export async function generateStaticParams() {
-  return getAllArticleSlugs().map((slug) => ({ slug }));
+  return getAllArticleSlugs().map((slug) => ({
+    slug,
+  }));
 }
 
 export async function generateMetadata({
@@ -26,7 +30,7 @@ export async function generateMetadata({
 
   if (!article) {
     return {
-      title: "Artikel Tidak Ditemukan",
+      title: "Artikel Tidak Ditemukan | Garda Siber",
     };
   }
 
@@ -36,7 +40,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ArticlePage({ params }: PageProps) {
+export default async function ArticleDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
 
@@ -44,33 +48,12 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound();
   }
 
-  const allArticles = getAllArticlesMeta();
-  const currentIndex = allArticles.findIndex((item) => item.slug === slug);
-
-  const previousArticle =
-    currentIndex > 0 ? allArticles[currentIndex - 1] : null;
-
-  const nextArticle =
-    currentIndex >= 0 && currentIndex < allArticles.length - 1
-      ? allArticles[currentIndex + 1]
-      : null;
-
-  const sameCategory = allArticles.filter(
-    (item) => item.slug !== slug && item.category === article.category,
-  );
-
-  const differentCategory = allArticles.filter(
-    (item) => item.slug !== slug && item.category !== article.category,
-  );
-
-  const relatedArticles = [...sameCategory, ...differentCategory].slice(0, 3);
+  const relatedArticles = getRelatedArticles(article.slug, article.category, 3);
 
   return (
-    <ArticleClient
-      article={article}
-      previousArticle={previousArticle}
-      nextArticle={nextArticle}
-      relatedArticles={relatedArticles}
-    />
+    <PageLayout>
+      <ArticleClient article={article} relatedArticles={relatedArticles} />
+      <Footer />
+    </PageLayout>
   );
 }
