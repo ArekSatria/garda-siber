@@ -1,22 +1,15 @@
-import Footer from "@/components/Footer";
-import PageLayout from "@/components/PageLayout";
-import { getLatestArticles } from "@/lib/articles";
 import type { Metadata } from "next";
+import { getAllArticlesMeta } from "@/lib/articles";
 import ArtikelClient from "./ArtikelClient";
 
 export const metadata: Metadata = {
-  title: "Pusat Artikel",
+  title: "Artikel Edukasi",
   description:
-    "Daftar komprehensif analisis modus operandi kejahatan digital dan regulasi hukum siber nasional.",
+    "Kumpulan artikel edukasi keamanan digital yang membahas ancaman umum, pencegahan, dan kebiasaan digital yang lebih aman.",
 };
 
 export default function ArtikelHubPage() {
-  const articles = getLatestArticles();
+  const articles = getAllArticlesMeta();
 
-  return (
-    <PageLayout>
-      <ArtikelClient articles={articles} />
-      <Footer />
-    </PageLayout>
-  );
+  return <ArtikelClient articles={articles} />;
 }

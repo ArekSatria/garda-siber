@@ -1,40 +1,76 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
 import ArticleClient from "./ArticleClient";
-import { getArticleData, getLatestArticles } from "@/lib/articles";
+import {
+  getArticleBySlug,
+  getAllArticleSlugs,
+  getAllArticlesMeta,
+} from "@/lib/articles";
+
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
 export async function generateStaticParams() {
-  return getLatestArticles().map((article) => ({ slug: article.slug }));
+  return getAllArticleSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const artikel = getArticleData(slug);
-  if (!artikel) return { title: "Artikel Tidak Ditemukan" };
+  const article = getArticleBySlug(slug);
+
+  if (!article) {
+    return {
+      title: "Artikel Tidak Ditemukan",
+    };
+  }
+
   return {
-    title: artikel.title,
-    description: artikel.summary,
-    openGraph: {
-      title: artikel.title,
-      description: artikel.summary,
-      images: artikel.bannerImg ? [{ url: artikel.bannerImg }] : [],
-    },
+    title: `${article.title} | Garda Siber`,
+    description: article.summary,
   };
 }
 
-export default async function ArtikelDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const artikel = getArticleData(slug);
-  const terkait = getLatestArticles()
-    .filter((a) => a.slug !== slug)
-    .slice(0, 3);
+  const article = getArticleBySlug(slug);
 
-  return <ArticleClient artikel={artikel} terkait={terkait} slug={slug} />;
+  if (!article) {
+    notFound();
+  }
+
+  const allArticles = getAllArticlesMeta();
+  const currentIndex = allArticles.findIndex((item) => item.slug === slug);
+
+  const previousArticle =
+    currentIndex > 0 ? allArticles[currentIndex - 1] : null;
+
+  const nextArticle =
+    currentIndex >= 0 && currentIndex < allArticles.length - 1
+      ? allArticles[currentIndex + 1]
+      : null;
+
+  const sameCategory = allArticles.filter(
+    (item) => item.slug !== slug && item.category === article.category,
+  );
+
+  const differentCategory = allArticles.filter(
+    (item) => item.slug !== slug && item.category !== article.category,
+  );
+
+  const relatedArticles = [...sameCategory, ...differentCategory].slice(0, 3);
+
+  return (
+    <ArticleClient
+      article={article}
+      previousArticle={previousArticle}
+      nextArticle={nextArticle}
+      relatedArticles={relatedArticles}
+    />
+  );
 }

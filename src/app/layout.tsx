@@ -1,30 +1,38 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SITE } from "@/constants/site";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  // %s akan diganti judul tiap halaman, contoh: "Phishing | Garda Siber"
   title: {
-    default: "Garda Siber — Pusat Literasi Keamanan Digital Indonesia",
-    template: "%s | Garda Siber",
+    default: `${SITE.name} — ${SITE.tagline}`,
+    template: `%s | ${SITE.name}`,
   },
-  description:
-    "Pelajari cara mengenali, mencegah, dan menghadapi ancaman kejahatan digital. Edukasi siber terpercaya untuk masyarakat Indonesia.",
+  description: SITE.description,
   keywords: [
     "keamanan siber",
     "literasi digital",
+    "keamanan akun",
     "phishing",
     "ransomware",
-    "keamanan internet",
-    "edukasi siber indonesia",
+    "edukasi keamanan digital",
+    "sumatera selatan",
+    "polda sumsel",
   ],
-  authors: [{ name: "Tim Garda Siber" }],
+  authors: [{ name: `${SITE.author} · ${SITE.institution}` }],
   openGraph: {
-    siteName: "Garda Siber",
-    locale: "id_ID",
+    siteName: SITE.name,
+    locale: SITE.locale,
     type: "website",
+    title: `${SITE.name} — ${SITE.tagline}`,
+    description: SITE.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE.name} — ${SITE.tagline}`,
+    description: SITE.description,
   },
 };
 

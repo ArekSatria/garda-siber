@@ -1,49 +1,264 @@
-/* Mengimpor mesin utama Tailwind v4 */
 @import "tailwindcss";
 
-/* Di sinilah kita menggantikan peran tailwind.config.ts */
-@theme {
-  /* Warna biru utama (Hero Banner) */
-  --color-primary: #0B57D0;
-  --color-primary-hover: #0842A0;
-  --color-primary-light: #D3E3FD;
-  
-  /* Merah untuk ancaman Tinggi */
-  --color-danger: #B3261E;
-  --color-danger-light: #F9DEDC;
-  
-  /* Oranye/Kuning untuk ancaman Sedang */
-  --color-warning: #B06000;
-  --color-warning-light: #FFEFD8;
-  
-  /* Hijau untuk ancaman Rendah */
-  --color-success: #146C2E;
-  --color-success-light: #C4EED0;
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --muted: #475569;
+  --primary: #0f52ba;
+  --primary-dark: #0b3f8c;
+  --line: #e2e8f0;
+  --surface: #ffffff;
+  --surface-soft: #f1f5f9;
+  --success: #0f766e;
+  --warning: #b45309;
+  --danger: #b91c1c;
+}
 
-  /* ================= CYBER 3D ROTATION ANIMATION ================= */
-  /* Daftarkan kelas animasi baru: Berputar 3D + Melayang Lambat */
-  --animate-siber-rotate: siber3DRotate 12s linear infinite;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-  @keyframes siber3DRotate {
-    0% {
-      transform: translateY(0px) rotateY(0deg);
-      filter: drop-shadow(0 10px 15px rgba(11, 87, 208, 0.2));
-    }
-    25% {
-      transform: translateY(-8px) rotateY(90deg);
-      filter: drop-shadow(5px 15px 25px rgba(11, 87, 208, 0.4));
-    }
-    50% {
-      transform: translateY(0px) rotateY(180deg);
-      filter: drop-shadow(0 10px 15px rgba(11, 87, 208, 0.2));
-    }
-    75% {
-      transform: translateY(-8px) rotateY(270deg);
-      filter: drop-shadow(-5px 15px 25px rgba(11, 87, 208, 0.4));
-    }
-    100% {
-      transform: translateY(0px) rotateY(360deg);
-      filter: drop-shadow(0 10px 15px rgba(11, 87, 208, 0.2));
-    }
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(15, 82, 186, 0.06), transparent 30%),
+    linear-gradient(to bottom, #f8fafc, #f8fafc);
+  color: var(--foreground);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  transition:
+    color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(15, 82, 186, 0.14);
+  color: #0f172a;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #0f172a;
+    letter-spacing: -0.025em;
   }
+
+  p {
+    color: #334155;
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply min-h-screen bg-transparent;
+  }
+
+  .page-section {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-block {
+    @apply py-16 sm:py-20;
+  }
+
+  .section-tag {
+    @apply inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#0F52BA];
+  }
+
+  .section-title {
+    @apply mt-4 text-3xl font-black leading-tight text-slate-900 sm:text-4xl lg:text-5xl;
+  }
+
+  .section-description {
+    @apply mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base;
+  }
+
+  .surface-card {
+    @apply rounded-[28px] border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.04)];
+  }
+
+  .soft-card {
+    @apply rounded-[28px] border border-slate-200/80 bg-slate-50/70 shadow-sm;
+  }
+
+  .primary-button {
+    @apply inline-flex items-center justify-center rounded-2xl bg-[#0F52BA] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#0B3F8C];
+  }
+
+  .secondary-button {
+    @apply inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50;
+  }
+
+  .hairline-grid {
+    background-image:
+      linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .border-gradient {
+    position: relative;
+  }
+
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgba(15, 82, 186, 0.18),
+      rgba(15, 23, 42, 0.04)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* Article prose */
+.prose {
+  color: #334155;
+}
+
+.prose h2 {
+  font-size: 1.65rem;
+  line-height: 1.2;
+  font-weight: 900;
+  margin-top: 2.2rem;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+.prose h3 {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  font-weight: 800;
+  margin-top: 1.6rem;
+  margin-bottom: 0.75rem;
+  color: #0f172a;
+}
+
+.prose p,
+.prose li {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: #334155;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.2rem;
+  margin: 1rem 0;
+}
+
+.prose li + li {
+  margin-top: 0.45rem;
+}
+
+.prose strong {
+  color: #0f172a;
+}
+
+.prose a {
+  color: #0f52ba;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose blockquote {
+  border-left: 4px solid rgba(15, 82, 186, 0.24);
+  background: #f8fbff;
+  color: #334155;
+  padding: 1rem 1.25rem;
+  border-radius: 0 1rem 1rem 0;
+  margin: 1.5rem 0;
+}
+
+.prose code {
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.45rem;
+  font-size: 0.92em;
+}
+
+.prose pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 1rem;
+  overflow-x: auto;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #eff6ff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

@@ -1,27 +1,52 @@
 ---
 title: "Bahaya WiFi Publik dan Cara Melindungi Diri"
-category: "Jaringan"
-iconName: "Wifi"
-iconBg: "bg-green-50 text-green-600"
+summary: "WiFi publik memang praktis, tetapi penggunaannya tanpa kehati-hatian dapat membuka risiko pencurian data. Pelaku dapat memantau lalu lintas jaringan atau membuat koneksi palsu yang tampak meyakinkan."
 date: "2026-05-18"
-author: "Tim Siber Sumsel"
-readTime: "5 Menit Baca"
+updatedAt: "2026-05-18"
+author: "Tim Garda Siber"
+category: "Jaringan"
+readTime: "5 menit"
 bannerImg: "/images/wifi.jpg"
-summary: "Menghubungkan perangkat ke WiFi gratis di kafe, bandara, atau tempat umum tanpa pengamanan sangat berisiko. Peretas bisa dengan mudah mencegat data sensitif Anda melalui teknik penyadapan jaringan."
+audience: "Masyarakat Umum"
+level: "Dasar"
+published: true
+tags:
+  - wifi publik
+  - keamanan jaringan
+  - koneksi aman
+  - privasi data
+keyTakeaways:
+  - WiFi publik tidak selalu aman untuk mengakses akun penting.
+  - Jaringan palsu dapat dibuat agar menyerupai hotspot resmi.
+  - Hindari login sensitif saat memakai koneksi yang tidak jelas keamanannya.
 ---
 
-## Ancaman Man-in-the-Middle
+## Mengapa WiFi Publik Berisiko?
 
-Melalui serangan **Man-in-the-Middle (MitM)**, peretas memposisikan diri mereka di antara perangkat Anda dan router WiFi asli. Semua lalu lintas data yang Anda kirim, termasuk password dan data perbankan, bisa dibaca pelaku.
+Jaringan WiFi di kafe, bandara, hotel, atau ruang publik umumnya dipakai oleh banyak orang sekaligus. Dalam kondisi tertentu, jaringan seperti ini tidak memiliki perlindungan yang cukup kuat untuk menjaga kerahasiaan data pengguna.
 
-Modus lain yang sering digunakan adalah **Evil Twin WiFi**, di mana pelaku membuat jaringan WiFi palsu dengan nama yang mirip tempat umum untuk memancing korban terhubung.
+Risiko terbesar muncul ketika pengguna mengakses akun penting, layanan keuangan, atau data sensitif tanpa lapisan pengamanan tambahan. Pada situasi seperti ini, pelaku dapat mencoba menyadap koneksi atau mengarahkan korban ke jaringan palsu.
 
-## Cara Aman Menggunakan Internet di Tempat Umum
+## Ancaman yang Paling Sering Terjadi
 
-1. Jangan pernah melakukan transaksi perbankan saat menggunakan WiFi publik.
-2. Selalu gunakan **VPN** (Virtual Private Network) tepercaya.
-3. Matikan fitur **Auto-Connect WiFi** pada pengaturan smartphone Anda.
-4. Pastikan situs web yang diakses menggunakan protokol **HTTPS**.
-5. Lupakan jaringan (Forget Network) setelah selesai menggunakannya.
+Salah satu risiko utama adalah serangan **Man-in-the-Middle (MitM)**. Pada skenario ini, pelaku menempatkan dirinya di antara perangkat pengguna dan jaringan yang digunakan, sehingga lalu lintas data dapat dipantau atau dimanipulasi.
 
-> **Tips Penting:** Lebih baik menggunakan kuota data seluler pribadi saat harus mengakses hal-hal sensitif seperti Mobile Banking.
+Modus lain yang juga umum adalah **Evil Twin WiFi**, yaitu jaringan palsu yang namanya dibuat sangat mirip dengan jaringan resmi. Korban yang tidak teliti bisa terhubung ke jaringan tersebut tanpa menyadari bahwa koneksinya telah diarahkan ke pihak yang salah.
+
+## Aktivitas yang Sebaiknya Dihindari
+
+1. Login ke mobile banking atau layanan keuangan.
+2. Mengakses email utama yang dipakai untuk reset password.
+3. Mengunggah dokumen penting atau data pribadi sensitif.
+4. Melakukan transaksi yang membutuhkan verifikasi keamanan.
+5. Mengisi password pada situs yang belum benar-benar dipastikan keasliannya.
+
+## Langkah Aman Saat Menggunakan Internet di Tempat Umum
+
+1. Prioritaskan penggunaan kuota data seluler untuk aktivitas penting.
+2. Gunakan VPN tepercaya jika memang harus memakai jaringan publik.
+3. Matikan fitur **Auto-Connect** agar perangkat tidak tersambung otomatis.
+4. Pastikan situs yang diakses menggunakan protokol **HTTPS**.
+5. Hapus atau **Forget Network** setelah selesai memakai jaringan tersebut.
+
+> **Tips Penting:** WiFi publik sebaiknya diperlakukan hanya sebagai koneksi umum, bukan sebagai tempat yang aman untuk mengakses akun sensitif.

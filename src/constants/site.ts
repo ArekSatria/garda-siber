@@ -1,17 +1,23 @@
-// ============================================================
-// src/constants/site.ts
-// Konstanta global situs — routing, teks, config.
-// Menghilangkan magic string "#0F52BA", "/login", dll yang
-// tersebar di puluhan file.
-// ============================================================
-
 export const SITE = {
   name: "Garda Siber",
-  tagline: "Pusat Literasi Keamanan Digital Indonesia",
+  tagline: "Media Edukasi Keamanan Digital",
   description:
-    "Pelajari cara mengenali, mencegah, dan menghadapi ancaman kejahatan digital. Edukasi siber terpercaya untuk masyarakat Indonesia.",
-  url: "https://garda-siber.id",
+    "Media edukasi keamanan digital untuk membantu masyarakat memahami ancaman siber, membangun kebiasaan aman, dan menerapkan langkah pencegahan yang praktis.",
+  institution: "Subdit 5 Siber Polda Sumsel",
+  projectContext:
+    "Dikembangkan sebagai project magang untuk kebutuhan edukasi dan literasi keamanan digital.",
   locale: "id_ID",
+  email: "subdit5siber@sumsel.polri.go.id",
+  phone: "(0711) 000000",
+  address: "Palembang, Sumatera Selatan",
+  author: "Tim Garda Siber",
+  disclaimerShort:
+    "Konten pada website ini bersifat edukatif dan preventif. Informasi tidak menggantikan pelaporan resmi atau penanganan hukum.",
+  social: {
+    instagram: "#",
+    tiktok: "#",
+    youtube: "#",
+  },
 } as const;
 
 export const ROUTES = {
@@ -36,6 +42,7 @@ export const BRAND = {
   primary: "#0F52BA",
   primaryHover: "#0842A0",
   primaryLight: "#EBF3FF",
+  surface: "#F8FAFC",
 } as const;
 
 /** Jumlah artikel yang ditampilkan di homepage */

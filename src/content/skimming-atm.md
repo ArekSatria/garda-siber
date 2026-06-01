@@ -1,27 +1,55 @@
 ---
 title: "Cara Mendeteksi Alat Skimming pada Mesin ATM dan EDC"
-category: "Penipuan"
-iconName: "CreditCard"
-iconBg: "bg-yellow-50 text-yellow-600"
+summary: "Skimming adalah pencurian data kartu melalui alat tambahan yang dipasang secara ilegal pada mesin ATM atau perangkat pembayaran. Jika data berhasil direkam, pelaku dapat menyalahgunakannya untuk transaksi tidak sah."
 date: "2026-05-08"
-author: "Tim Siber Sumsel"
-readTime: "5 Menit Baca"
+updatedAt: "2026-05-08"
+author: "Tim Garda Siber"
+category: "Penipuan"
+readTime: "5 menit"
 bannerImg: "/images/atm.jpg"
-summary: "Skimming adalah pencurian data kartu ATM menggunakan alat perekam khusus yang dipasang secara ilegal pada mesin kartu. Pelaku bisa menduplikasi kartu Anda secara instan."
+audience: "Masyarakat Umum"
+level: "Dasar"
+published: true
+tags:
+  - skimming
+  - ATM
+  - EDC
+  - kartu bank
+  - PIN
+keyTakeaways:
+  - Skimming memanfaatkan alat tambahan pada mesin ATM atau perangkat pembayaran.
+  - Kondisi fisik mesin perlu diperiksa sebelum transaksi dilakukan.
+  - Perlindungan PIN dan pemantauan transaksi sangat penting.
 ---
 
-## Cara Kerja Alat Skimming
+## Bagaimana Skimming Terjadi?
 
-Selain memasang perekam data kartu, pelaku juga menempelkan **kamera lubang jarum (pinhole camera)** di atas kanopi keypad untuk merekam gerakan jari saat memasukkan PIN.
+Pelaku memasang alat perekam data pada slot kartu atau memodifikasi perangkat pembayaran agar dapat menyalin informasi kartu secara diam-diam. Dalam beberapa kasus, mereka juga menambahkan kamera kecil untuk merekam gerakan jari saat korban memasukkan PIN.
 
-Modus ini juga marak terjadi di mesin EDC kasir toko, di mana mesin telah dimodifikasi dengan alat pembaca ganda yang menyalin data nasabah secara diam-diam.
+Karena alat tersebut sering dipasang menyerupai bagian asli mesin, korban tidak selalu menyadari adanya manipulasi fisik. Itulah sebabnya pemeriksaan sederhana sebelum bertransaksi sangat penting.
 
-## Tindakan Cek Fisik Sebelum Bertransaksi
+## Area Mesin yang Perlu Diperiksa
 
-1. Pegang dan goyang mulut lubang kartu ATM. Jika terasa longgar atau janggal, batalkan transaksi.
-2. Selalu **tutup tangan** saat menekan tombol PIN di keypad mesin.
-3. Perhatikan kanopi penutup keypad — periksa apakah ada benda asing mencurigakan.
-4. Gunakan fitur **Cardless Withdrawal** (tarik tunai tanpa kartu via mobile banking).
-5. Periksa mutasi saldo rekening secara berkala.
+1. Slot kartu yang terasa longgar, tebal, atau tidak rapi.
+2. Keypad yang tampak berbeda dari biasanya.
+3. Benda asing di sekitar area penutup keypad.
+4. Kamera kecil atau lubang yang mencurigakan di bagian atas mesin.
+5. Perangkat EDC yang terlihat dimodifikasi atau tidak wajar bentuknya.
 
-> **Tips Penting:** Menutup gerakan jari saat menekan PIN adalah pertahanan terbaik. Tanpa PIN, peretas tidak bisa menguras uang meskipun data kartu berhasil disalin.
+## Kebiasaan Aman Sebelum dan Saat Bertransaksi
+
+1. Periksa kondisi mesin secara visual sebelum digunakan.
+2. Goyangkan perlahan slot kartu jika terasa mencurigakan.
+3. Tutup keypad dengan tangan saat memasukkan PIN.
+4. Gunakan mesin di lokasi yang lebih aman dan diawasi.
+5. Pantau mutasi rekening secara berkala setelah transaksi.
+
+## Langkah Jika Mencurigai Skimming
+
+1. Batalkan transaksi dan jangan gunakan mesin tersebut.
+2. Pindah ke mesin lain yang lebih aman.
+3. Segera hubungi bank jika kartu diduga sudah terekspos.
+4. Ganti PIN bila diperlukan.
+5. Laporkan mesin mencurigakan kepada petugas atau pihak terkait.
+
+> **Tips Penting:** Menutup keypad saat memasukkan PIN tetap menjadi langkah sederhana yang sangat efektif untuk mengurangi risiko penyalahgunaan data kartu.

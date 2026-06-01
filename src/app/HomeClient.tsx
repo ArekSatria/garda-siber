@@ -1,500 +1,490 @@
 "use client";
 
-import Footer from "@/components/Footer";
-import PageLayout from "@/components/PageLayout";
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
 import {
-  Search,
-  Bell,
-  FileText,
-  ChevronRight,
-  AlertTriangle,
-  Lock,
-  Mail,
-  Wifi,
-  Wallet,
-  Smartphone,
-  EyeOff,
-  BookOpen,
-  BarChart2,
-  Check,
   ArrowRight,
-  Shield,
-  Globe,
-  Server,
+  BadgeCheck,
+  BookOpen,
+  CheckCircle2,
+  ChevronRight,
+  FileWarning,
+  LockKeyhole,
   ShieldAlert,
-  Brain,
+  Smartphone,
+  TriangleAlert,
+  Wifi,
 } from "lucide-react";
 
-// ✅ Import dari konstanta terpusat (Step 1) — tidak ada lagi duplikasi
-import { getCategoryStyle } from "@/constants/categories";
-import { getThreatLevelStyle } from "@/constants/threats";
-import { ROUTES } from "@/constants/site";
-import { getAllThreats } from "@/data/threats";
-import type { ArticleMeta } from "@/types";
-import type { Notification } from "@/types";
+import Footer from "@/components/Footer";
+import PageLayout from "@/components/PageLayout";
 
-// ✅ iconMap tetap di sini karena ini mapping Lucide component — bukan style
-const ICON_MAP: Record<string, React.ElementType> = {
-  Lock,
-  Mail,
-  Wifi,
-  Wallet,
-  Smartphone,
-  EyeOff,
-  Globe,
-  Server,
-  ShieldAlert,
-  Shield,
+type ArticlePreview = {
+  slug: string;
+  title: string;
+  summary: string;
+  category: string;
+  author: string;
+  readTime: string;
+  bannerImg?: string;
+  audience?: string;
+  level?: string;
 };
 
-// ✅ Notifikasi dipisah sebagai konstanta di luar komponen
-// — tidak di-recreate setiap render
-const NOTIFICATIONS: Notification[] = [
+type ThreatPreview = {
+  id: string;
+  title: string;
+  shortDesc: string;
+  level: string;
+  image: string;
+};
+
+type Props = {
+  latestArticles: ArticlePreview[];
+  featuredThreats: ThreatPreview[];
+};
+
+const LEARNING_PATHS = [
   {
-    id: 1,
-    title: "Waspada Ransomware Baru",
-    desc: "Varian baru LockBit menyerang sektor finansial.",
-    time: "10 menit lalu",
+    title: "Proteksi Akun",
+    description:
+      "Pelajari password yang kuat, 2FA, dan kebiasaan login yang lebih aman.",
+    href: "/artikel",
+    icon: LockKeyhole,
   },
   {
-    id: 2,
-    title: "Kebocoran Data KTP",
-    desc: "Diduga 2 juta data bocor di forum intelijen.",
-    time: "2 jam lalu",
+    title: "Penipuan Digital",
+    description:
+      "Kenali phishing, scam APK, penipuan investasi, dan modus manipulasi sosial.",
+    href: "/ancaman",
+    icon: TriangleAlert,
+  },
+  {
+    title: "Keamanan Perangkat",
+    description:
+      "Pahami langkah dasar melindungi ponsel, laptop, aplikasi, dan data pribadi.",
+    href: "/artikel",
+    icon: Smartphone,
+  },
+  {
+    title: "Privasi & Data",
+    description:
+      "Pelajari cara menjaga data pribadi dan mengurangi risiko penyalahgunaan informasi.",
+    href: "/artikel",
+    icon: FileWarning,
   },
 ];
 
-interface Props {
-  latestArticles: ArticleMeta[];
+const QUICK_CHECKLIST = [
+  "Aktifkan verifikasi dua langkah pada akun penting.",
+  "Jangan pernah membagikan kode OTP kepada siapa pun.",
+  "Periksa kembali alamat situs dan tautan sebelum login.",
+  "Perbarui sistem operasi dan aplikasi secara berkala.",
+  "Gunakan password berbeda untuk akun yang berbeda.",
+  "Waspadai file, APK, atau undangan digital yang mencurigakan.",
+];
+
+const FEATURE_POINTS = [
+  "Materi dibuat dengan bahasa yang lebih mudah dipahami.",
+  "Fokus pada pencegahan dan kebiasaan digital yang lebih aman.",
+  "Cocok untuk masyarakat umum, pelajar, dan pengguna sehari-hari.",
+];
+
+function getThreatIcon(title: string) {
+  const lower = title.toLowerCase();
+
+  if (lower.includes("wifi")) return Wifi;
+  if (lower.includes("phishing")) return ShieldAlert;
+  if (lower.includes("sim")) return Smartphone;
+  return TriangleAlert;
 }
 
-export default function HomeClient({ latestArticles }: Props) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [hasNewNotifications, setHasNewNotifications] = useState(true);
-
-  // ✅ Pakai getThreatLevelStyle dari @/constants/threats — hapus levelMap duplikat
-  const currentThreats = getAllThreats()
-    .slice(0, 4)
-    .map((t) => {
-      const levelStyle = getThreatLevelStyle(t.level);
-      return {
-        id: t.id,
-        title: t.title,
-        desc: t.shortDesc.split(" ").slice(0, 4).join(" "),
-        level: levelStyle.label,
-        levelColor: levelStyle.badgeClass,
-        icon: ICON_MAP[t.iconName] ?? ShieldAlert,
-        iconBg: levelStyle.iconBg,
-      };
-    });
-
-  // ✅ Pakai getCategoryStyle dari @/constants/categories
-  // — hapus rantai ternary panjang borderColor & iconColor
-  const popularTopics = latestArticles.slice(0, 3).map((art) => {
-    const catStyle = getCategoryStyle(art.category);
-    const Icon = ICON_MAP[catStyle.iconName] ?? Shield;
-    return {
-      title: art.title.split(":")[0].split("dan")[0].trim(),
-      slug: art.slug,
-      imageUrl: art.bannerImg,
-      icon: Icon,
-      borderColor: catStyle.borderColor,
-      iconColor: catStyle.iconColor,
-    };
-  });
-
-  const filteredArticles = latestArticles
-    .filter(
-      (a) =>
-        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.summary.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-    .slice(0, 5);
-
-  const filteredThreats = currentThreats.filter(
-    (t) =>
-      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.desc.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
+export default function HomeClient({ latestArticles, featuredThreats }: Props) {
   return (
     <PageLayout>
-      {/* ── HEADER ── */}
-      <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-50">
-        <div className="flex-1 max-w-2xl">
-          <div className="relative">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-              size={20}
-              aria-hidden="true"
-            />
-            <input
-              type="search"
-              placeholder="Cari artikel, jenis ancaman, atau kategori siber..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Cari konten"
-              className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0F52BA] transition-all font-medium text-slate-700"
-            />
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-20">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#0F52BA]">
+              <BadgeCheck size={14} />
+              Media Edukasi Keamanan Digital
+            </div>
+
+            <h1 className="mt-5 text-balance text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              Belajar keamanan digital dengan cara yang lebih jelas dan praktis
+            </h1>
+
+            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+              Garda Siber membantu masyarakat memahami ancaman siber, langkah
+              pencegahan dasar, dan kebiasaan digital yang lebih aman melalui
+              materi yang ringkas, terstruktur, dan mudah diikuti.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/artikel"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#0B3F8C]"
+              >
+                Jelajahi Materi
+                <ArrowRight size={17} />
+              </Link>
+
+              <Link
+                href="/ancaman"
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              >
+                Lihat Ancaman Umum
+              </Link>
+            </div>
+
+            <div className="mt-8 grid gap-3">
+              {FEATURE_POINTS.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+                >
+                  <CheckCircle2
+                    size={18}
+                    className="mt-0.5 shrink-0 text-[#0F52BA]"
+                  />
+                  <p className="text-sm leading-6 text-slate-600">{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* NOTIFIKASI */}
-        <div className="relative ml-4">
-          <button
-            onClick={() => setShowNotifications(!showNotifications)}
-            aria-label="Notifikasi"
-            aria-expanded={showNotifications}
-            className={`p-2 rounded-full transition-colors relative ${
-              showNotifications
-                ? "bg-slate-100 text-[#0F52BA]"
-                : "text-slate-500 hover:bg-slate-100"
-            }`}
-          >
-            <Bell size={22} />
-            {hasNewNotifications && (
-              <span
-                className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"
-                aria-label="Ada notifikasi baru"
-              />
-            )}
-          </button>
+          <div className="grid gap-5">
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#0F52BA]">
+                    Mulai dari sini
+                  </p>
+                  <h2 className="mt-2 text-2xl font-black text-slate-900">
+                    Langkah awal yang paling penting
+                  </h2>
+                </div>
 
-          {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 overflow-hidden py-2">
-              <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
-                <span className="font-black text-xs text-slate-800 uppercase tracking-wider">
-                  Pemberitahuan Siber
-                </span>
-                {hasNewNotifications && (
-                  <button
-                    onClick={() => setHasNewNotifications(false)}
-                    className="text-[10px] font-bold text-[#0F52BA] flex items-center gap-1 hover:underline"
-                  >
-                    <Check size={10} /> Tandai dibaca
-                  </button>
-                )}
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#0F52BA]">
+                  <BookOpen size={22} />
+                </div>
               </div>
-              <div className="divide-y divide-slate-50 max-h-64 overflow-y-auto">
-                {NOTIFICATIONS.map((notif) => (
+
+              <div className="mt-5 space-y-3">
+                {[
+                  "Pahami ciri phishing dan tautan palsu.",
+                  "Gunakan password yang kuat dan unik.",
+                  "Aktifkan verifikasi dua langkah.",
+                  "Jangan instal file atau APK sembarangan.",
+                ].map((item, index) => (
                   <div
-                    key={notif.id}
-                    className="p-4 hover:bg-slate-50 transition-colors cursor-pointer"
+                    key={item}
+                    className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"
                   >
-                    <h5 className="font-bold text-slate-800 text-xs mb-0.5">
-                      {notif.title}
-                    </h5>
-                    <p className="text-slate-500 text-[11px] leading-relaxed font-medium">
-                      {notif.desc}
-                    </p>
-                    <span className="text-[10px] text-slate-400 font-bold mt-1.5 block">
-                      {notif.time}
-                    </span>
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0F52BA] text-xs font-bold text-white">
+                      {index + 1}
+                    </div>
+                    <p className="text-sm leading-6 text-slate-600">{item}</p>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
-      </header>
 
-      {/* ── KONTEN UTAMA ── */}
-      <main className="p-8 flex-1 space-y-8">
-        {/* HERO BANNER */}
-        <div className="w-full min-h-[280px] bg-gradient-to-r from-slate-950 via-[#0A1E3F] to-slate-950 rounded-[2rem] shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between px-8 md:px-12 py-6 md:py-0 relative overflow-hidden">
-          <div className="max-w-xl text-white space-y-4 relative z-10 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 text-xs font-black uppercase tracking-widest">
-              <Shield size={12} aria-hidden="true" /> Garda Siber Indonesia
-            </div>
-            <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tight leading-none text-slate-50">
-              Lindungi Diri dari <br className="hidden md:block" /> Ancaman
-              Siber
-            </h2>
-            <p className="text-slate-300 font-medium text-xs md:text-sm leading-relaxed">
-              Pelajari cara mengenali, mencegah, dan mengamankan aset digital
-              instansi serta privasi personal Anda secara komprehensif melalui
-              pusat literasi kami.
-            </p>
-            <div className="pt-2 flex justify-center md:justify-start">
               <Link
-                href={ROUTES.articles}
-                className="bg-[#0F52BA] hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-black uppercase tracking-wider text-xs transition-all flex items-center gap-2 shadow-lg shadow-blue-900/30 border border-blue-500/30"
+                href="/artikel"
+                className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA] transition hover:gap-3"
               >
-                <BookOpen size={14} aria-hidden="true" /> Mulai belajar
+                Buka materi dasar
+                <ChevronRight size={16} />
+              </Link>
+            </div>
+
+            <div className="rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#0F52BA_0%,#0B3F8C_100%)] p-6 text-white shadow-[0_12px_30px_rgba(15,82,186,0.22)]">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-blue-100">
+                Cek Pengetahuan
+              </p>
+              <h3 className="mt-2 text-2xl font-black">
+                Uji pemahaman Anda lewat quiz singkat
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-blue-50/90">
+                Setelah membaca materi, Anda bisa mencoba quiz untuk melihat
+                sejauh mana pemahaman terhadap keamanan digital dasar.
+              </p>
+
+              <Link
+                href="/quiz"
+                className="mt-5 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[#0F52BA] transition hover:bg-slate-100"
+              >
+                Cek Pengetahuan Sekarang
               </Link>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="w-full md:w-[420px] h-48 md:h-64 relative flex items-center justify-center overflow-hidden mt-6 md:mt-0 z-10 [perspective:1000px]">
-            <Image
-              src="/images/logo-siber.png"
-              alt="Logo Resmi Reserse Siber Polri"
-              fill
-              className="object-contain animate-siber-rotate [transform-style:preserve-3d] will-change-transform select-none"
-              priority
-            />
-          </div>
-
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-15" />
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          <div className="section-tag">Jalur Belajar</div>
+          <h2 className="section-title">Pilih topik sesuai kebutuhan Anda</h2>
+          <p className="section-description">
+            Materi disusun agar lebih mudah dijelajahi. Anda bisa mulai dari
+            topik yang paling dekat dengan aktivitas digital sehari-hari.
+          </p>
         </div>
 
-        {/* GRID UTAMA */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          {/* ── KIRI (2/3) ── */}
-          <div className="lg:col-span-2 flex flex-col gap-6 h-full">
-            {/* ARTIKEL */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col flex-1">
-              <div className="flex items-center justify-between mb-6 border-b border-slate-50 pb-4">
-                <div className="flex items-center gap-2 text-slate-800 font-bold text-lg">
-                  <FileText
-                    size={20}
-                    className="text-[#0F52BA]"
-                    aria-hidden="true"
-                  />
-                  <h3>Artikel edukasi siber</h3>
-                </div>
-                <Link
-                  href={ROUTES.articles}
-                  className="text-xs font-black text-[#0F52BA] hover:underline flex items-center gap-1 uppercase tracking-wider"
-                >
-                  Lihat semua <ChevronRight size={14} />
-                </Link>
-              </div>
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {LEARNING_PATHS.map((item) => {
+            const Icon = item.icon;
 
-              <div className="divide-y divide-slate-100 flex-1">
-                {filteredArticles.length > 0 ? (
-                  filteredArticles.map((article) => {
-                    // ✅ Satu baris — pakai getCategoryStyle, hapus iconBgMap inline
-                    const catStyle = getCategoryStyle(article.category);
-                    const Icon = ICON_MAP[catStyle.iconName] ?? Shield;
-                    return (
-                      <Link
-                        key={article.slug}
-                        href={`${ROUTES.articles}/${article.slug}`}
-                        className="flex gap-4 items-center py-4 first:pt-1 last:pb-1 hover:bg-slate-50 px-3 -mx-3 rounded-xl transition-colors cursor-pointer group block"
-                      >
-                        <div
-                          className={`p-3 rounded-xl transition-colors ${catStyle.iconBg} group-hover:bg-[#EBF3FF] group-hover:text-[#0F52BA] shrink-0`}
-                        >
-                          <Icon size={22} aria-hidden="true" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-800 mb-1 group-hover:text-[#0F52BA] transition-colors leading-snug truncate">
-                            {article.title}
-                          </h4>
-                          <div className="flex items-center gap-3 text-xs font-medium">
-                            {/* ✅ Pakai catStyle.badgeBg — tidak hardcode #EBF3FF */}
-                            <span
-                              className={`${catStyle.badgeBg} px-2 py-0.5 rounded-md text-[10px] uppercase font-black tracking-wider`}
-                            >
-                              {article.category}
-                            </span>
-                            <span className="text-slate-400">
-                              {article.date}
-                            </span>
-                          </div>
-                        </div>
-                        <ChevronRight
-                          size={16}
-                          className="text-slate-300 group-hover:text-[#0F52BA] group-hover:translate-x-0.5 transition-all shrink-0"
-                        />
-                      </Link>
-                    );
-                  })
-                ) : (
-                  <div className="text-center py-12 text-slate-400 text-sm font-bold">
-                    Artikel tidak ditemukan.
-                  </div>
-                )}
-              </div>
+            return (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#0F52BA]">
+                  <Icon size={22} />
+                </div>
+
+                <h3 className="mt-5 text-xl font-black text-slate-900">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {item.description}
+                </p>
+
+                <div className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA] transition group-hover:gap-3">
+                  Pelajari topik
+                  <ChevronRight size={16} />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-3xl">
+              <div className="section-tag">Ancaman Umum</div>
+              <h2 className="section-title">
+                Kenali ancaman yang paling sering ditemui
+              </h2>
+              <p className="section-description">
+                Mempelajari ancaman umum membantu Anda lebih cepat mengenali
+                risiko dan mengambil langkah pencegahan yang tepat.
+              </p>
             </div>
 
-            {/* KATEGORI TREN */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4 shrink-0">
-              <div className="flex items-center justify-between border-b border-slate-50 pb-3 mb-4">
-                <div className="flex items-center gap-2 text-slate-800 font-bold text-base">
-                  <BarChart2
-                    size={18}
-                    className="text-[#0F52BA]"
-                    aria-hidden="true"
-                  />
-                  <h3>Kategori tren pekan ini</h3>
-                </div>
-                <Link
-                  href={ROUTES.articles}
-                  className="text-xs font-black text-[#0F52BA] hover:underline flex items-center gap-1 uppercase tracking-wider text-[11px]"
-                >
-                  Jelajahi semua <ChevronRight size={12} />
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {popularTopics.map((topic, index) => (
-                  <Link
-                    href={`${ROUTES.articles}/${topic.slug}`}
-                    key={index}
-                    className={`bg-white border border-slate-100 border-l-4 ${topic.borderColor} rounded-xl hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between min-h-[220px] shadow-sm overflow-hidden`}
-                  >
-                    <div className="h-28 w-full overflow-hidden relative bg-slate-50">
-                      {/* ✅ Ganti <img> biasa dengan next/image untuk optimasi */}
-                      <Image
-                        src={topic.imageUrl}
-                        alt={topic.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        sizes="(max-width: 640px) 100vw, 33vw"
-                      />
-                      <div className="absolute top-2 left-2 z-10">
-                        <div
-                          className={`w-7 h-7 rounded-lg bg-white/95 backdrop-blur-sm ${topic.iconColor} flex items-center justify-center shadow-sm`}
-                        >
-                          <topic.icon size={14} aria-hidden="true" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4 flex-1 flex flex-col justify-between bg-white">
-                      <h4 className="font-black text-slate-800 text-sm group-hover:text-[#0F52BA] transition-colors tracking-tight leading-tight">
-                        {topic.title}
-                      </h4>
-                      <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-50 opacity-80 group-hover:opacity-100">
-                        <span className="text-[9px] font-black uppercase text-slate-400 group-hover:text-[#0F52BA] tracking-wider">
-                          Mulai Tinjau
-                        </span>
-                        <ArrowRight
-                          size={12}
-                          className="text-slate-300 group-hover:text-[#0F52BA] group-hover:translate-x-0.5 transition-all shrink-0"
-                        />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <Link
+              href="/ancaman"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA]"
+            >
+              Lihat semua ancaman
+              <ChevronRight size={16} />
+            </Link>
           </div>
 
-          {/* ── KANAN (1/3) ── */}
-          <div className="flex flex-col gap-6 h-full">
-            {/* STATUS ANCAMAN */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm shrink-0">
-              <div className="flex items-center gap-2 text-slate-800 font-bold text-lg mb-6 border-b border-slate-50 pb-4">
-                <AlertTriangle
-                  size={20}
-                  className="text-amber-500"
-                  aria-hidden="true"
-                />
-                <h3>Status ancaman aktif</h3>
-              </div>
-              <div className="space-y-4">
-                {filteredThreats.length > 0 ? (
-                  filteredThreats.map((threat) => (
-                    <Link
-                      key={threat.id}
-                      href={`${ROUTES.threats}/${threat.id}`}
-                      className="flex items-center justify-between border-b border-slate-50 pb-4 last:border-0 last:pb-0 hover:bg-slate-50 px-2 -mx-2 rounded-xl transition-colors cursor-pointer group"
-                    >
-                      <div className="flex gap-3 items-center">
-                        <div className={`p-2.5 rounded-xl ${threat.iconBg}`}>
-                          <threat.icon size={20} aria-hidden="true" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-slate-800 text-sm group-hover:text-[#0F52BA] transition-colors">
-                            {threat.title}
-                          </h4>
-                          <p className="text-xs text-slate-500 mt-0.5 font-medium">
-                            {threat.desc}
-                          </p>
-                        </div>
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {featuredThreats.map((threat) => {
+              const Icon = getThreatIcon(threat.title);
+
+              return (
+                <Link
+                  key={threat.id}
+                  href={`/ancaman/${threat.id}`}
+                  className="group overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50 transition hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="h-40 w-full overflow-hidden bg-slate-100">
+                    {threat.image ? (
+                      <img
+                        src={threat.image}
+                        alt={threat.title}
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400">
+                        <ShieldAlert size={28} />
                       </div>
-                      {/* ✅ Pakai levelStyle.badgeClass dari konstanta */}
-                      <span
-                        className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${threat.levelColor}`}
-                      >
+                    )}
+                  </div>
+
+                  <div className="p-5">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#0F52BA]">
+                        <Icon size={20} />
+                      </div>
+
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-700">
                         {threat.level}
                       </span>
-                    </Link>
-                  ))
+                    </div>
+
+                    <h3 className="text-lg font-black text-slate-900">
+                      {threat.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                      {threat.shortDesc}
+                    </p>
+
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA]">
+                      Pelajari ancaman
+                      <ChevronRight size={16} />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-3xl">
+            <div className="section-tag">Artikel Terbaru</div>
+            <h2 className="section-title">
+              Materi yang bisa langsung Anda pelajari
+            </h2>
+            <p className="section-description">
+              Artikel dirancang untuk membantu pembaca memahami topik keamanan
+              digital secara bertahap dan lebih mudah dipraktikkan.
+            </p>
+          </div>
+
+          <Link
+            href="/artikel"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA]"
+          >
+            Buka semua artikel
+            <ChevronRight size={16} />
+          </Link>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {latestArticles.map((article) => (
+            <Link
+              key={article.slug}
+              href={`/artikel/${article.slug}`}
+              className="group overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="h-52 w-full overflow-hidden bg-slate-100">
+                {article.bannerImg ? (
+                  <img
+                    src={article.bannerImg}
+                    alt={article.title}
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
                 ) : (
-                  <div className="text-center py-4 text-slate-400 text-xs font-bold">
-                    Ancaman tidak ditemukan.
+                  <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400">
+                    <BookOpen size={28} />
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* WIDGET QUIZ */}
-            <div className="bg-gradient-to-br from-[#0F52BA] to-blue-700 rounded-2xl p-6 text-white shrink-0">
-              <div className="flex items-center gap-2 mb-3">
-                <Brain size={18} className="text-blue-200" aria-hidden="true" />
-                <h4 className="font-black text-sm uppercase tracking-wider">
-                  Quiz Literasi Siber
-                </h4>
-              </div>
-              <p className="text-blue-200 text-xs font-medium leading-relaxed mb-5">
-                Seberapa aman digital Anda? Uji kemampuan mengenali ancaman
-                siber dalam 10 soal interaktif.
-              </p>
-              <div className="flex gap-2 mb-5">
-                {[
-                  { val: "10", label: "Soal" },
-                  { val: "~5", label: "Menit" },
-                  { val: "3", label: "Format" },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="bg-white/10 rounded-xl px-3 py-2 text-center flex-1"
-                  >
-                    <p className="font-black text-white text-lg">{stat.val}</p>
-                    <p className="text-blue-200 text-[10px] font-bold uppercase">
-                      {stat.label}
+              <div className="p-6">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[#0F52BA]">
+                    {article.category}
+                  </span>
+
+                  {article.level ? (
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-600">
+                      {article.level}
+                    </span>
+                  ) : null}
+                </div>
+
+                <h3 className="mt-4 line-clamp-2 text-xl font-black leading-tight text-slate-900">
+                  {article.title}
+                </h3>
+
+                <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-600">
+                  {article.summary}
+                </p>
+
+                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                  <div className="text-xs text-slate-500">
+                    <p className="font-semibold text-slate-700">
+                      {article.author}
                     </p>
+                    <p>{article.readTime}</p>
                   </div>
-                ))}
+
+                  <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA] transition group-hover:gap-3">
+                    Baca artikel
+                    <ChevronRight size={16} />
+                  </span>
+                </div>
               </div>
-              <Link
-                href={ROUTES.quiz}
-                className="flex items-center justify-center gap-2 bg-white text-[#0F52BA] py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-all w-full"
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+          <div>
+            <div className="section-tag">Checklist Cepat</div>
+            <h2 className="section-title">
+              Langkah sederhana yang sebaiknya dilakukan sekarang
+            </h2>
+            <p className="section-description">
+              Tidak semua orang perlu memahami istilah teknis yang rumit. Namun,
+              ada beberapa kebiasaan dasar yang sangat membantu menurunkan
+              risiko.
+            </p>
+          </div>
+
+          <div className="grid gap-3">
+            {QUICK_CHECKLIST.map((item) => (
+              <div
+                key={item}
+                className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
               >
-                Mulai Quiz <ArrowRight size={14} />
-              </Link>
-            </div>
-
-            {/* TIPS MITIGASI */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col flex-1">
-              <div className="flex items-center gap-2 text-slate-800 font-bold mb-4 border-b border-slate-50 pb-2">
-                <BookOpen
+                <CheckCircle2
                   size={18}
-                  className="text-slate-400"
-                  aria-hidden="true"
+                  className="mt-0.5 shrink-0 text-[#0F52BA]"
                 />
-                <h4>Tips mitigasi hari ini</h4>
+                <p className="text-sm leading-7 text-slate-600">{item}</p>
               </div>
-              <div className="space-y-5 flex-1 flex flex-col justify-center">
-                {[
-                  "Aktifkan autentikasi dua faktor (2FA) menggunakan aplikasi authenticator di semua akun penting.",
-                  "Jangan pernah mengeklik tautan atau mengunduh dokumen dari pengirim asing yang mencurigakan.",
-                  "Perbarui aplikasi Mobile Banking dan sistem operasi smartphone Anda secara rutin untuk menutup celah exploit.",
-                ].map((tip, i) => (
-                  <div key={i} className="flex gap-3 items-start">
-                    <div
-                      className="w-6 h-6 bg-[#0F52BA]/10 text-[#0F52BA] rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5"
-                      aria-hidden="true"
-                    >
-                      {i + 1}
-                    </div>
-                    <p className="text-sm text-slate-600 font-medium leading-relaxed">
-                      {tip}
-                    </p>
-                  </div>
-                ))}
-              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="overflow-hidden rounded-[36px] border border-slate-200 bg-[linear-gradient(135deg,#F8FBFF_0%,#EEF4FF_55%,#FFFFFF_100%)] p-8 shadow-sm sm:p-10 lg:p-12">
+          <div className="max-w-3xl">
+            <div className="section-tag">Penutup</div>
+            <h2 className="mt-4 text-3xl font-black leading-tight text-slate-900 sm:text-4xl">
+              Mulai dari materi dasar, lalu uji pemahaman Anda
+            </h2>
+            <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
+              Anda tidak perlu memahami semua hal teknis sekaligus. Mulailah
+              dari topik yang paling dekat dengan aktivitas digital sehari-hari,
+              lalu lanjutkan dengan quiz untuk mengecek pemahaman.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/artikel"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#0B3F8C]"
+              >
+                Jelajahi Materi
+                <ArrowRight size={17} />
+              </Link>
+
+              <Link
+                href="/quiz"
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              >
+                Cek Pengetahuan
+              </Link>
             </div>
           </div>
         </div>
-      </main>
+      </section>
+
       <Footer />
     </PageLayout>
   );

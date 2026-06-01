@@ -1,28 +1,16 @@
-"use client";
+import type { ReactNode } from "react";
+import PublicHeader from "@/components/PublicHeader";
 
-import Sidebar from "@/components/Sidebar";
-import ForbiddenBanner from "@/components/ForbiddenBanner";
+type Props = {
+  children: ReactNode;
+};
 
-interface PageLayoutProps {
-  children: React.ReactNode;
-  /** Tambah class Tailwind pada wrapper konten jika perlu */
-  className?: string;
-}
-
-export default function PageLayout({
-  children,
-  className = "",
-}: PageLayoutProps) {
+export default function PageLayout({ children }: Props) {
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
-      <ForbiddenBanner />
-      <Sidebar />
-
-      <div
-        className={`flex-1 lg:ml-64 ml-0 flex flex-col min-w-0 pt-16 lg:pt-0 ${className}`}
-      >
-        {children}
-      </div>
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[360px] bg-[radial-gradient(circle_at_top,rgba(15,82,186,0.08),transparent_60%)]" />
+      <PublicHeader />
+      <main className="relative pt-[86px]">{children}</main>
     </div>
   );
 }
