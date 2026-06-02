@@ -64,10 +64,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Hanya jalankan middleware pada route ini.
-     * Skip semua static files, _next, favicon, dll.
-     */
+   
     "/dashboard/:path*",
     "/profil/:path*",
   ],

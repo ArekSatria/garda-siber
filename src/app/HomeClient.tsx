@@ -101,38 +101,46 @@ function getThreatIcon(title: string) {
 export default function HomeClient({ latestArticles, featuredThreats }: Props) {
   return (
     <PageLayout>
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-20">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#0F52BA]">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+        {/* Dekorasi Latar Belakang */}
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[800px] h-[800px] bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-3xl opacity-60 pointer-events-none" />
+
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24">
+          <div className="max-w-2xl animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/50 backdrop-blur-sm px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-[#0F52BA]">
               <BadgeCheck size={14} />
               Media Edukasi Keamanan Digital
             </div>
 
-            <h1 className="mt-5 text-balance text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Belajar keamanan digital dengan cara yang lebih jelas dan praktis
+            <h1 className="mt-6 text-balance text-4xl font-black leading-[1.15] text-slate-900 sm:text-5xl lg:text-6xl tracking-tight">
+              Lindungi diri dari ancaman digital dengan{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0F52BA] to-blue-400">
+                cara yang tepat
+              </span>
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 animate-fade-in-up delay-100">
               Garda Siber membantu masyarakat memahami ancaman siber, langkah
               pencegahan dasar, dan kebiasaan digital yang lebih aman melalui
               materi yang ringkas, terstruktur, dan mudah diikuti.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row animate-fade-in-up delay-200">
               <Link
                 href="/artikel"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#0B3F8C]"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-7 py-4 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-1 hover:bg-[#0B3F8C] hover:shadow-blue-500/40"
               >
                 Jelajahi Materi
-                <ArrowRight size={17} />
+                <ArrowRight
+                  size={17}
+                  className="transition-transform group-hover:translate-x-1"
+                />
               </Link>
-
               <Link
                 href="/ancaman"
-                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-7 py-4 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-1"
               >
-                Lihat Ancaman Umum
+                Katalog Ancaman
               </Link>
             </div>
 
@@ -152,8 +160,8 @@ export default function HomeClient({ latestArticles, featuredThreats }: Props) {
             </div>
           </div>
 
-          <div className="grid gap-5">
-            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
+          <div className="grid gap-6 animate-fade-in-up delay-300">
+            <div className="group rounded-[2rem] border border-slate-200/60 bg-white/60 backdrop-blur-xl p-8 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.05)] transition-all hover:shadow-[0_20px_40px_-15px_rgba(15,82,186,0.1)] hover:-translate-y-1">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#0F52BA]">

@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   RotateCcw,
   ShieldCheck,
-  XCircle,
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
@@ -515,11 +514,9 @@ export default function QuizPage() {
 
   const weakestCategories = useMemo(() => {
     const counts = new Map<string, number>();
-
     missedQuestions.forEach((question) => {
       counts.set(question.category, (counts.get(question.category) ?? 0) + 1);
     });
-
     return [...counts.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 4)
@@ -528,29 +525,23 @@ export default function QuizPage() {
 
   const recommendation = useMemo(() => {
     if (!submitted) return "";
-
-    if (percentage >= 87) {
+    if (percentage >= 87)
       return "Pemahaman Anda sudah sangat baik. Langkah berikutnya adalah menjaga konsistensi kebiasaan aman dan memperdalam topik yang lebih spesifik.";
-    }
-    if (percentage >= 73) {
+    if (percentage >= 73)
       return "Pemahaman Anda sudah cukup kuat, tetapi masih ada beberapa bagian yang perlu diperkuat agar lebih siap menghadapi risiko digital sehari-hari.";
-    }
-    if (percentage >= 60) {
+    if (percentage >= 60)
       return "Dasar pemahaman Anda sudah mulai terbentuk, tetapi masih ada beberapa pola ancaman dan kebiasaan aman yang perlu ditinjau kembali.";
-    }
     return "Anda sebaiknya mengulang materi dasar terlebih dahulu, terutama yang berkaitan dengan keamanan akun, penipuan digital, aplikasi, dan perilaku aman saat memakai perangkat.";
   }, [percentage, submitted]);
 
   useEffect(() => {
     if (!started) return;
-
     const id = window.requestAnimationFrame(() => {
       quizCardRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     });
-
     return () => window.cancelAnimationFrame(id);
   }, [started]);
 
@@ -583,7 +574,6 @@ export default function QuizPage() {
   const handleSubmit = () => {
     if (!selectedValue) return;
     setSubmitted(true);
-
     window.requestAnimationFrame(() => {
       quizCardRef.current?.scrollIntoView({
         behavior: "smooth",
@@ -605,60 +595,67 @@ export default function QuizPage() {
     <PageLayout>
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-5xl px-4 py-14 text-center sm:px-6 lg:px-8 lg:py-18">
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#0F52BA]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/50 backdrop-blur-sm px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-[#0F52BA]">
             <ShieldCheck size={14} />
             Evaluasi Pemahaman
           </div>
 
-          <h1 className="mx-auto mt-5 max-w-4xl text-balance text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-[3.25rem] lg:leading-[1.05]">
-            Uji pemahaman Anda setelah membaca materi secara menyeluruh
+          <h1 className="mx-auto mt-6 max-w-4xl text-balance text-4xl font-black leading-[1.15] text-slate-900 sm:text-5xl lg:text-[3.25rem]">
+            Uji pemahaman Anda setelah membaca materi{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0F52BA] to-blue-400">
+              secara menyeluruh
+            </span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-            Evaluasi ini membantu Anda melihat sejauh mana pemahaman terhadap
-            berbagai topik keamanan digital yang telah dipelajari.
+          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-slate-600">
+            Evaluasi ini dirancang layaknya interaksi modern untuk membantu Anda
+            melihat sejauh mana pemahaman terhadap berbagai topik keamanan
+            digital yang telah dipelajari.
           </p>
 
-          {!started ? (
-            <div className="mt-8 flex justify-center">
+          {!started && (
+            <div className="mt-10 flex justify-center animate-fade-in-up">
               <button
                 type="button"
                 onClick={handleStart}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#0B3F8C]"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-8 py-4 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-1 hover:bg-[#0B3F8C] hover:shadow-blue-500/40"
               >
-                Mulai Evaluasi
-                <ArrowRight size={16} />
+                Mulai Evaluasi Sekarang
+                <ArrowRight
+                  size={17}
+                  className="transition-transform group-hover:translate-x-1"
+                />
               </button>
             </div>
-          ) : null}
+          )}
         </div>
       </section>
 
       {!started ? (
-        <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 animate-fade-in-up delay-100">
           <div className="grid gap-6 md:grid-cols-3">
             {[
               {
-                title: "Lebih menilai pemahaman",
-                desc: "Pertanyaan dirancang agar Anda perlu menimbang konteks, bukan hanya menebak jawaban yang paling obvious.",
+                title: "Lebih Menilai Pemahaman",
+                desc: "Pertanyaan dirancang agar Anda perlu menimbang konteks, bukan sekadar menebak jawaban paling *obvious*.",
               },
               {
-                title: "Topik lebih luas",
-                desc: "Evaluasi mencakup keamanan akun, phishing, aplikasi, jaringan, data pribadi, hingga respons awal saat ada indikasi risiko.",
+                title: "Topik Lebih Luas",
+                desc: "Evaluasi mencakup keamanan akun, phishing, jaringan publik, hingga respons awal saat ada indikasi risiko keamanan.",
               },
               {
-                title: "Ada skenario nyata",
-                desc: "Sebagian soal berbentuk situasi yang lebih dekat dengan kondisi yang mungkin terjadi dalam penggunaan digital sehari-hari.",
+                title: "Skenario Kehidupan Nyata",
+                desc: "Sebagian soal berbentuk simulasi situasi yang sangat dekat dengan kondisi Anda sehari-hari di dunia digital.",
               },
             ].map((item) => (
               <div
                 key={item.title}
-                className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
+                className="rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.03)] transition-all hover:-translate-y-1 hover:shadow-lg"
               >
                 <h3 className="text-xl font-black text-slate-900">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-4 text-sm leading-relaxed text-slate-600">
                   {item.desc}
                 </p>
               </div>
@@ -666,86 +663,96 @@ export default function QuizPage() {
           </div>
         </section>
       ) : !submitted && currentQuestion ? (
-        <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 min-h-[70vh] flex flex-col justify-center">
           <div
             ref={quizCardRef}
-            className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+            className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white p-6 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] sm:p-10 animate-fade-in-up"
           >
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="max-w-3xl">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#0F52BA]">
-                    {currentQuestion.category}
-                  </span>
-
-                  {currentQuestion.scenario ? (
-                    <span className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-700">
-                      Skenario
-                    </span>
-                  ) : null}
-                </div>
-
-                <h2 className="mt-4 text-2xl font-black leading-tight text-slate-900 sm:text-3xl">
-                  {currentQuestion.question}
-                </h2>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">
-                {currentIndex + 1} / {quizQuestions.length}
-              </div>
-            </div>
-
-            <div className="mb-8 h-2 overflow-hidden rounded-full bg-slate-100">
+            {/* Floating Progress Bar di Atas Kartu */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100">
               <div
-                className="h-full rounded-full bg-[#0F52BA] transition-all"
+                className="h-full bg-gradient-to-r from-blue-400 to-[#0F52BA] transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
 
-            <div className="space-y-3">
-              {currentQuestion.options.map((option) => {
-                const active = selectedValue === option.value;
-
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => handleSelect(option.value)}
-                    className={`w-full rounded-[22px] border px-5 py-4 text-left transition ${
-                      active
-                        ? "border-[#0F52BA] bg-blue-50"
-                        : "border-slate-200 bg-white hover:bg-slate-50"
-                    }`}
-                  >
-                    <span className="text-sm font-semibold leading-7 text-slate-700">
-                      {option.label}
-                    </span>
-                  </button>
-                );
-              })}
+            {/* Header info (kategori & nomor soal) */}
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full bg-blue-50/80 px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-[#0F52BA]">
+                  {currentQuestion.category}
+                </span>
+                {currentQuestion.scenario && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-amber-700 ring-1 ring-amber-200/50">
+                    Skenario Nyata
+                  </span>
+                )}
+              </div>
+              <div className="rounded-full bg-slate-100 px-4 py-1.5 text-sm font-extrabold text-slate-500">
+                Soal {currentIndex + 1}{" "}
+                <span className="opacity-50">/ {quizQuestions.length}</span>
+              </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-slate-500">
-                Sudah dijawab{" "}
-                <span className="font-bold text-slate-700">
-                  {answeredCount}
-                </span>{" "}
-                dari{" "}
-                <span className="font-bold text-slate-700">
-                  {quizQuestions.length}
-                </span>{" "}
-                pertanyaan.
+            {/* Pertanyaan & Opsi dengan "key" prop agar re-animasi tiap pindah soal */}
+            <div key={currentQuestion.id} className="animate-fade-in-up">
+              <h2 className="text-2xl font-black leading-[1.3] text-slate-900 sm:text-3xl mb-8">
+                {currentQuestion.question}
+              </h2>
+
+              <div className="space-y-3.5">
+                {currentQuestion.options.map((option) => {
+                  const active = selectedValue === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleSelect(option.value)}
+                      className={`group relative w-full rounded-[1.25rem] border-2 px-6 py-4 text-left transition-all duration-200 ease-out flex items-center gap-4 ${
+                        active
+                          ? "border-[#0F52BA] bg-blue-50/50 shadow-md shadow-blue-500/10 scale-[1.01]"
+                          : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      {/* Custom Radio Button Indicator */}
+                      <div
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          active
+                            ? "border-[#0F52BA] bg-[#0F52BA]"
+                            : "border-slate-300 group-hover:border-blue-300"
+                        }`}
+                      >
+                        {active && (
+                          <div className="h-2 w-2 rounded-full bg-white animate-fade-in-up" />
+                        )}
+                      </div>
+                      <span
+                        className={`text-base font-semibold leading-relaxed transition-colors ${
+                          active ? "text-[#0F52BA]" : "text-slate-700"
+                        }`}
+                      >
+                        {option.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Navigasi Bawah */}
+            <div className="mt-10 flex flex-col gap-4 border-t border-slate-100 pt-8 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm font-medium text-slate-400">
+                Pilih salah satu jawaban yang paling tepat.
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-2xl px-6 py-3.5 text-sm font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 disabled:opacity-30 disabled:hover:bg-transparent"
                 >
-                  Sebelumnya
+                  Kembali
                 </button>
 
                 {currentIndex === quizQuestions.length - 1 ? (
@@ -753,18 +760,18 @@ export default function QuizPage() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={!selectedValue}
-                    className="inline-flex items-center justify-center rounded-2xl bg-[#0F52BA] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#0B3F8C] disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5 hover:bg-[#0B3F8C] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
                   >
-                    Lihat Hasil
+                    Lihat Hasil Akhir <ArrowRight size={18} />
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={handleNext}
                     disabled={!selectedValue}
-                    className="inline-flex items-center justify-center rounded-2xl bg-[#0F52BA] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#0B3F8C] disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5 hover:bg-[#0B3F8C] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
                   >
-                    Berikutnya
+                    Lanjut <ArrowRight size={18} />
                   </button>
                 )}
               </div>
@@ -772,164 +779,144 @@ export default function QuizPage() {
           </div>
         </section>
       ) : (
-        <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
           <div
             ref={quizCardRef}
-            className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+            className="rounded-[2.5rem] border border-slate-200/80 bg-white p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] sm:p-12 animate-fade-in-up"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-emerald-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-emerald-700">
               <BadgeCheck size={14} />
               Hasil Evaluasi
             </div>
 
-            <h2 className="mt-5 text-3xl font-black text-slate-900 sm:text-4xl">
-              Skor Anda: {score} / {quizQuestions.length}
+            <h2 className="mt-6 text-3xl font-black text-slate-900 sm:text-5xl tracking-tight">
+              Skor Akhir: {score}{" "}
+              <span className="text-slate-300">/ {quizQuestions.length}</span>
             </h2>
 
-            <p className="mt-3 text-lg font-semibold text-[#0F52BA]">
-              {resultLabel} · {percentage}%
+            <p className="mt-4 text-xl font-bold text-[#0F52BA]">
+              {resultLabel} · Akurasi {percentage}%
             </p>
 
-            <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-600 sm:text-base">
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600">
               {recommendation}
             </p>
 
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                  Jawaban tepat
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Jawaban Tepat
                 </p>
-                <p className="mt-2 text-2xl font-black text-slate-900">
+                <p className="mt-2 text-3xl font-black text-slate-900">
                   {score}
                 </p>
               </div>
 
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                  Perlu ditinjau
+              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Perlu Ditinjau
                 </p>
-                <p className="mt-2 text-2xl font-black text-slate-900">
+                <p className="mt-2 text-3xl font-black text-slate-900">
                   {quizQuestions.length - score}
                 </p>
               </div>
 
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                  Akurasi
+              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Akurasi Anda
                 </p>
-                <p className="mt-2 text-2xl font-black text-slate-900">
+                <p className="mt-2 text-3xl font-black text-slate-900">
                   {percentage}%
                 </p>
               </div>
             </div>
 
-            <div className="mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-              <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                <h3 className="text-2xl font-black text-slate-900">
-                  Kesimpulan hasil
-                </h3>
-                <p className="mt-4 text-sm leading-8 text-slate-600">
-                  Hasil ini memberi gambaran singkat tentang kekuatan pemahaman
-                  Anda saat ini. Gunakan hasil ini untuk menentukan langkah
-                  belajar berikutnya.
-                </p>
-              </div>
-
-              <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                <h3 className="text-2xl font-black text-slate-900">
+            {weakestCategories.length > 0 && (
+              <div className="mt-10 rounded-[1.5rem] border border-amber-100 bg-amber-50/50 p-6 sm:p-8">
+                <h3 className="text-xl font-black text-slate-900">
                   Topik yang sebaiknya diulang
                 </h3>
-
-                {weakestCategories.length > 0 ? (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {weakestCategories.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm leading-8 text-slate-600">
-                    Tidak ada topik yang menonjol untuk diulang. Pemahaman Anda
-                    sudah cukup merata di berbagai area.
-                  </p>
-                )}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {weakestCategories.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full bg-white border border-amber-200 px-4 py-2 text-sm font-bold text-amber-800 shadow-sm"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {missedQuestions.length > 0 ? (
-              <div className="mt-10">
+              <div className="mt-12 border-t border-slate-100 pt-10">
                 <h3 className="text-2xl font-black text-slate-900">
-                  Tinjauan jawaban yang belum tepat
+                  Tinjauan & Pembahasan
                 </h3>
-
-                <div className="mt-6 space-y-4">
+                <div className="mt-6 space-y-6">
                   {missedQuestions.map((question) => (
                     <div
                       key={question.id}
-                      className="rounded-[24px] border border-slate-200 bg-slate-50 p-5"
+                      className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6 sm:p-8"
                     >
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-600">
+                        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-600">
                           {question.category}
                         </span>
-
-                        <span className="rounded-full bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-red-700">
-                          Belum Tepat
+                        <span className="rounded-full bg-red-100/50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-red-700 ring-1 ring-red-200">
+                          Jawaban Kurang Tepat
                         </span>
                       </div>
-
-                      <h4 className="mt-4 text-lg font-black leading-snug text-slate-900">
+                      <h4 className="mt-5 text-lg font-black leading-relaxed text-slate-900">
                         {question.question}
                       </h4>
-
-                      <p className="mt-3 text-sm leading-7 text-slate-600">
-                        <span className="font-semibold text-slate-800">
-                          Pembahasan:
-                        </span>{" "}
-                        {question.explanation}
-                      </p>
+                      <div className="mt-4 rounded-xl bg-white border border-slate-100 p-4">
+                        <p className="text-sm leading-relaxed text-slate-600">
+                          <span className="font-extrabold text-[#0F52BA] uppercase text-xs tracking-wider block mb-1">
+                            Mengapa demikian?
+                          </span>
+                          {question.explanation}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className="mt-10 rounded-[28px] border border-emerald-100 bg-emerald-50 p-6">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2
-                    size={20}
-                    className="mt-0.5 shrink-0 text-emerald-700"
-                  />
+              <div className="mt-12 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-8 shadow-sm">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                    <CheckCircle2 size={24} />
+                  </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900">
-                      Semua jawaban Anda tepat
+                    <h3 className="text-xl font-black text-emerald-950">
+                      Sempurna! Semua jawaban Anda tepat.
                     </h3>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
-                      Hasil Anda menunjukkan pemahaman yang sangat baik pada
-                      evaluasi ini. Pertahankan kebiasaan aman dan lanjutkan
-                      memperdalam materi yang lebih spesifik.
+                    <p className="mt-2 text-base leading-relaxed text-emerald-800">
+                      Pemahaman literasi siber Anda luar biasa. Pertahankan
+                      kebiasaan digital yang aman ini di kehidupan sehari-hari.
                     </p>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-12 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/artikel"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#0B3F8C]"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-7 py-4 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-1 hover:bg-[#0B3F8C]"
               >
-                Jelajahi Materi
-                <ArrowRight size={16} />
+                Jelajahi Materi Lain
+                <ArrowRight
+                  size={16}
+                  className="transition-transform group-hover:translate-x-1"
+                />
               </Link>
-
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-7 py-4 text-sm font-bold text-slate-700 transition hover:-translate-y-1 hover:bg-slate-50 hover:shadow-md"
               >
                 <RotateCcw size={16} />
                 Ulangi Evaluasi

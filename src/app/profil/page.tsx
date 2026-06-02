@@ -14,14 +14,28 @@ export default async function ProfilPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) redirect("/login");
 
-  // Ambil profil
+  // Ambil profil dari database
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
+
+  // 🛡️ AUTO-HEALING (ENTERPRISE GRADE)
+  // Jika database lambat / profile belum terbuat, gunakan data sesi Auth Google sebagai fallback
+  const safeProfile = profile || {
+    id: user.id,
+    email: user.email || "",
+    full_name:
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      "Pengguna Garda Siber",
+    role: "user",
+    created_at: user.created_at || new Date().toISOString(),
+  };
 
   // Ambil favorit
   const { data: favorites } = await supabase
@@ -39,7 +53,7 @@ export default async function ProfilPage() {
 
   return (
     <ProfilClient
-      profile={profile}
+      profile={safeProfile}
       favorites={favorites ?? []}
       quizResults={quizResults ?? []}
     />
