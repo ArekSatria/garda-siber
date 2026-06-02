@@ -25,7 +25,6 @@ const STATS = [
   { icon: Layers, value: "10+", label: "Kategori Ancaman Siber" },
 ];
 
-// ─── Form dipisah karena useSearchParams wajib dibungkus Suspense ─────────────
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,7 +36,6 @@ function LoginForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Tampilkan error dari URL — dikirim oleh /auth/callback saat Google OAuth gagal
   useEffect(() => {
     const urlError = searchParams.get("error");
     if (urlError) setError(decodeURIComponent(urlError));
@@ -55,7 +53,7 @@ function LoginForm() {
     });
 
     if (error) {
-      setError("Email atau password salah. Silakan coba lagi.");
+      setError("Email atau password salah. Silakan periksa kembali data Anda.");
       setLoading(false);
       return;
     }
@@ -65,12 +63,8 @@ function LoginForm() {
       .select("role")
       .eq("id", data.user.id)
       .single();
-
-    if (profile?.role === "admin") {
-      router.push("/dashboard");
-    } else {
-      router.push("/");
-    }
+    if (profile?.role === "admin") router.push("/dashboard");
+    else router.push("/");
     router.refresh();
   }
 
@@ -78,49 +72,41 @@ function LoginForm() {
     setGoogleLoading(true);
     setError("");
     const supabase = createClient();
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=/`,
-        // Paksa dialog pilih akun Google muncul setiap kali
         queryParams: { prompt: "select_account" },
       },
     });
-
     if (error) {
-      setError("Gagal login dengan Google. Silakan coba lagi.");
+      setError("Sistem Google OAuth gagal merespons. Silakan coba lagi.");
       setGoogleLoading(false);
     }
-    // Jika berhasil, browser redirect ke Google — tidak perlu setGoogleLoading(false)
   }
 
   return (
     <div className="px-8 pt-8 pb-8">
-      {/* Title */}
       <div className="mb-7">
-        <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
           Selamat Datang Kembali
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1.5 font-medium">
+        <p className="text-slate-500 text-sm mt-1.5 font-medium">
           Masuk untuk melanjutkan pembelajaran keamanan digital
         </p>
       </div>
 
-      {/* Error */}
+      {/* Merah Bahaya Tegas */}
       {error && (
-        <div className="flex items-start gap-3 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-2xl px-4 py-3.5 mb-6">
-          <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-          <p className="text-red-600 dark:text-red-400 text-sm font-medium leading-snug">
-            {error}
-          </p>
+        <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-3.5 mb-6 animate-fade-in-up">
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <p className="text-red-700 text-sm font-bold leading-snug">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleLogin} className="space-y-4">
-        {/* Email */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-bold text-slate-700 mb-1.5">
             Alamat Email
           </label>
           <div className="relative">
@@ -131,21 +117,17 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="contoh@email.com"
               required
-              autoComplete="email"
-              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F52BA]/25 focus:border-[#0F52BA] dark:focus:border-blue-400 transition-all"
+              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#00a9d8] focus:ring-1 focus:ring-[#00a9d8] transition-all"
             />
           </div>
         </div>
 
-        {/* Password */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Password
-            </label>
+            <label className="text-sm font-bold text-slate-700">Password</label>
             <Link
               href="/lupa-password"
-              className="text-xs font-semibold text-[#0F52BA] dark:text-blue-400 hover:underline"
+              className="text-xs font-bold text-[#00a9d8] hover:text-[#0d9edf] hover:underline"
             >
               Lupa password?
             </Link>
@@ -158,16 +140,12 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Masukkan password Anda"
               required
-              autoComplete="current-password"
-              className="w-full pl-11 pr-12 py-3.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F52BA]/25 focus:border-[#0F52BA] dark:focus:border-blue-400 transition-all"
+              className="w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#00a9d8] focus:ring-1 focus:ring-[#00a9d8] transition-all"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-              aria-label={
-                showPassword ? "Sembunyikan password" : "Tampilkan password"
-              }
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="w-4 h-4" />
@@ -178,47 +156,10 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Remember me */}
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => setRememberMe(!rememberMe)}
-            className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-all flex-shrink-0 ${
-              rememberMe
-                ? "bg-[#0F52BA] border-[#0F52BA]"
-                : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
-            }`}
-            aria-label="Ingat saya"
-          >
-            {rememberMe && (
-              <svg
-                className="w-3 h-3 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={3}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            )}
-          </button>
-          <span
-            className="text-sm text-slate-600 dark:text-slate-400 font-medium select-none cursor-pointer"
-            onClick={() => setRememberMe(!rememberMe)}
-          >
-            Ingat saya selama 30 hari
-          </span>
-        </div>
-
-        {/* Submit */}
         <button
           type="submit"
           disabled={loading || !email || !password}
-          className="w-full mt-2 bg-[#0F52BA] hover:bg-[#0A3E8E] active:bg-[#082F6E] disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 dark:disabled:text-slate-500 text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_16px_rgba(15,82,186,0.35)] hover:shadow-[0_6px_20px_rgba(15,82,186,0.45)] disabled:shadow-none flex items-center justify-center gap-2"
+          className="w-full mt-4 bg-[#00a9d8] hover:bg-[#0d9edf] disabled:bg-slate-200 disabled:text-slate-400 text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_16px_rgba(0,169,216,0.3)] hover:shadow-lg disabled:shadow-none flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -227,31 +168,29 @@ function LoginForm() {
             </>
           ) : (
             <>
-              <span>Masuk</span>
+              <span className="text-[15px]">Masuk</span>
               <ArrowRight className="w-4 h-4" />
             </>
           )}
         </button>
       </form>
 
-      {/* Divider */}
-      <div className="relative my-5">
+      <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-100 dark:border-slate-700" />
+          <div className="w-full border-t border-slate-200" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white dark:bg-slate-800 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+          <span className="bg-white px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
             atau
           </span>
         </div>
       </div>
 
-      {/* Google */}
       <button
         type="button"
         onClick={handleGoogleLogin}
         disabled={googleLoading}
-        className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all shadow-sm"
       >
         {googleLoading ? (
           <Loader2 className="w-4 h-4 animate-spin" />
@@ -275,15 +214,14 @@ function LoginForm() {
             />
           </svg>
         )}
-        <span>Masuk dengan Google</span>
+        <span>Lanjutkan dengan Google</span>
       </button>
 
-      {/* Footer */}
-      <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+      <p className="text-center text-sm text-slate-500 mt-6 font-medium">
         Belum punya akun?{" "}
         <Link
           href="/register"
-          className="font-bold text-[#0F52BA] dark:text-blue-400 hover:underline"
+          className="font-bold text-[#00a9d8] hover:text-[#0d9edf] hover:underline"
         >
           Daftar Sekarang
         </Link>
@@ -292,144 +230,94 @@ function LoginForm() {
   );
 }
 
-// ─── Page utama ───────────────────────────────────────────────────────────────
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex bg-white dark:bg-slate-950">
-      {/* ── LEFT PANEL ───────────────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[52%] xl:w-[55%] relative flex-col overflow-hidden">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0A3880] via-[#0F52BA] to-[#1565C0]" />
-
-        {/* Subtle geometric texture */}
+    <div className="min-h-screen flex bg-slate-50">
+      <div className="hidden lg:flex lg:w-[55%] relative flex-col overflow-hidden">
+        {/* Latar Belakang Eksklusif Cyan/Teal */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#00a9d8] via-[#0d9edf] to-[#259b9a]" />
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.05]"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
           }}
         />
-
-        {/* Shield watermark */}
-        <div className="absolute bottom-[-60px] right-[-80px] opacity-[0.06]">
+        <div className="absolute bottom-[-60px] right-[-80px] opacity-[0.1]">
           <Shield
             className="w-[480px] h-[480px] text-white"
             strokeWidth={0.5}
           />
         </div>
 
-        {/* Top diagonal accent */}
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] opacity-10">
-          <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
-        </div>
-
-        {/* Content */}
         <div className="relative z-10 flex flex-col h-full px-12 xl:px-16 py-12">
-          {/* Logo */}
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
+            <div className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 shadow-lg">
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div>
-              <span className="font-bold text-white text-lg tracking-tight leading-none block">
+              <span className="font-black text-white text-xl tracking-tight leading-none block">
                 Garda Siber
               </span>
-              <span className="text-blue-200/80 text-[10px] font-semibold uppercase tracking-[0.15em] leading-none">
-                Keamanan Digital
+              <span className="text-cyan-100 text-[10px] font-bold uppercase tracking-[0.2em]">
+                Pusat Edukasi
               </span>
             </div>
           </div>
 
-          {/* Badge */}
           <div className="mt-10">
-            <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/90 text-xs font-semibold px-4 py-2 rounded-full backdrop-blur-sm">
-              <CheckCircle className="w-3.5 h-3.5 text-blue-200" />
-              Platform Literasi Keamanan Digital Indonesia
+            <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white text-xs font-bold px-4 py-2 rounded-full backdrop-blur-sm">
+              <CheckCircle className="w-4 h-4 text-cyan-200" /> Platform
+              Literasi Keamanan Digital Indonesia
             </span>
           </div>
 
-          {/* Headline */}
           <div className="mt-8 flex-1">
-            <h1 className="text-4xl xl:text-[2.75rem] font-extrabold text-white leading-[1.15] tracking-tight">
-              Keamanan Digital
-              <br />
-              <span className="text-blue-200">Dimulai Dari</span>
-              <br />
+            <h1 className="text-4xl xl:text-5xl font-black text-white leading-[1.15] tracking-tight">
+              Keamanan Digital <br />
+              <span className="text-cyan-200">Dimulai Dari</span> <br />
               Kesadaran
             </h1>
-            <p className="mt-6 text-blue-100/80 text-base leading-relaxed max-w-[380px]">
-              Garda Siber membantu masyarakat Indonesia mengenali, mencegah, dan
-              menghadapi ancaman kejahatan siber melalui edukasi yang mudah
-              dipahami.
+            <p className="mt-6 text-cyan-50 text-base leading-relaxed max-w-sm font-medium">
+              Garda Siber membantu Anda mengenali, mencegah, dan menghadapi
+              ancaman siber melalui materi yang praktis.
             </p>
 
-            {/* Stats */}
             <div className="mt-10 grid grid-cols-3 gap-4">
               {STATS.map(({ icon: Icon, value, label }) => (
                 <div
                   key={label}
-                  className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-4 hover:bg-white/[0.14] transition-colors"
+                  className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all"
                 >
-                  <Icon className="w-5 h-5 text-blue-200 mb-2" />
-                  <div className="text-2xl font-extrabold text-white leading-none">
-                    {value}
-                  </div>
-                  <div className="text-blue-200/70 text-xs font-medium mt-1 leading-tight">
+                  <Icon className="w-6 h-6 text-cyan-200 mb-2" />
+                  <div className="text-2xl font-black text-white">{value}</div>
+                  <div className="text-cyan-100 text-[11px] font-bold mt-1 uppercase tracking-wider">
                     {label}
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Bottom tagline */}
-          <div className="mt-10 border-t border-white/10 pt-6">
-            <p className="text-blue-200/60 text-xs font-medium">
-              © 2025 Garda Siber · Pusat Literasi Keamanan Digital Indonesia
-            </p>
-          </div>
         </div>
       </div>
 
-      {/* ── RIGHT PANEL ──────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center px-6 sm:px-10 py-12 bg-[#F7F9FC] dark:bg-slate-900">
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-[420px]">
-          {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-[#0F52BA] rounded-xl flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <span className="font-bold text-slate-900 dark:text-white text-base block">
-                Garda Siber
-              </span>
-              <span className="text-slate-500 text-[10px] uppercase tracking-widest">
-                Keamanan Digital
-              </span>
-            </div>
-          </div>
-
-          {/* Card */}
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_48px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_48px_rgba(0,0,0,0.3)] border border-slate-100 dark:border-slate-700/50 overflow-hidden">
-            {/* Card header accent */}
-            <div className="h-1 bg-gradient-to-r from-[#0F52BA] via-blue-400 to-[#0F52BA]" />
-
-            {/* Suspense wajib karena LoginForm pakai useSearchParams */}
+          <div className="bg-white rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-slate-200 overflow-hidden">
+            <div className="h-1.5 bg-gradient-to-r from-[#00a9d8] to-[#259b9a]" />
             <Suspense
               fallback={
                 <div className="px-8 py-12 flex justify-center">
-                  <Loader2 className="w-6 h-6 animate-spin text-slate-300" />
+                  <Loader2 className="w-6 h-6 animate-spin text-[#00a9d8]" />
                 </div>
               }
             >
               <LoginForm />
             </Suspense>
           </div>
-
-          {/* Back link */}
-          <p className="text-center mt-6">
+          <p className="text-center mt-8">
             <Link
               href="/"
-              className="text-sm text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors font-medium"
+              className="text-sm font-bold text-slate-400 hover:text-slate-700 transition-colors"
             >
               ← Kembali ke Beranda
             </Link>

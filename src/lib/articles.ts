@@ -200,3 +200,7 @@ export function getRelatedArticles(
 
   return [...sameCategory, ...fallback].slice(0, limit);
 }
+
+export function getLatestArticles(): ArticleMeta[] {
+  return getAllArticlesMeta();
+}

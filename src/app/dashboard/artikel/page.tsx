@@ -1,185 +1,93 @@
 import { getLatestArticles } from "@/lib/articles";
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  FileText,
-  ExternalLink,
-  Clock,
-  Tag,
-  User,
-  BookOpen,
-} from "lucide-react";
+import { FileText, ExternalLink, BookOpen } from "lucide-react";
 
-export const metadata: Metadata = { title: "Artikel & Konten" };
+export const metadata: Metadata = { title: "Daftar Inventaris Konten Siber" };
 
 export default function DashboardArtikelPage() {
   const articles = getLatestArticles();
-  const kategoris = Array.from(new Set(articles.map((a) => a.category)));
 
   const categoryColors: Record<string, string> = {
-    Password: "bg-blue-500/15 text-blue-400 border-blue-500/25",
-    Phishing: "bg-rose-500/15 text-rose-400 border-rose-500/25",
-    Jaringan: "bg-cyan-500/15 text-cyan-400 border-cyan-500/25",
-    Penipuan: "bg-amber-500/15 text-amber-400 border-amber-500/25",
-    Perangkat: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
-    "Hukum Siber": "bg-violet-500/15 text-violet-400 border-violet-500/25",
-    Umum: "bg-slate-500/15 text-slate-400 border-slate-500/25",
+    Password: "bg-blue-50 text-blue-600 border-blue-200",
+    Phishing: "bg-rose-50 text-rose-600 border-rose-200",
+    Jaringan: "bg-green-50 text-[#66d47e] border-green-200",
+    Penipuan: "bg-orange-50 text-[#f4af1b] border-orange-200",
+    Perangkat: "bg-purple-50 text-purple-600 border-purple-200",
+    "Hukum Siber": "bg-yellow-50 text-[#ffd55a] border-yellow-200",
   };
 
-  function formatDate(d: string) {
-    return new Date(d).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  }
-
   return (
-    <div className="p-8 space-y-6 min-h-screen">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="p-6 lg:p-10 space-y-6 min-h-screen bg-[#F8FAFC]">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-black text-white">Artikel & Konten</h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Semua konten edukasi yang tersedia di Garda Siber
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            Katalog Konten
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">
+            Basis data repositori artikel literasi publik.
           </p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl">
-          <BookOpen size={15} className="text-violet-400" />
-          <span className="text-slate-300 text-sm font-bold">
-            {articles.length} artikel
-          </span>
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 shadow-sm">
+          <BookOpen size={16} className="text-[#66d47e]" /> {articles.length}{" "}
+          File Aktif
         </div>
       </div>
 
-      {/* Category Stats */}
-      <div className="grid grid-cols-6 gap-3">
-        {kategoris.map((k) => (
-          <div
-            key={k}
-            className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center"
-          >
-            <p className="text-white font-black text-xl">
-              {articles.filter((a) => a.category === k).length}
-            </p>
-            <p className="text-slate-500 text-[10px] font-semibold mt-0.5 truncate">
-              {k}
-            </p>
-          </div>
-        ))}
+      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex gap-3 text-sm leading-relaxed text-blue-800">
+        <FileText size={18} className="shrink-0 mt-0.5 text-blue-600" />
+        <p>
+          <strong>Sistem Manajemen Berbasis Markdown:</strong> Modifikasi teks
+          dan penerbitan materi edukasi dilakukan secara statis melalui
+          repositori file lokal <code>src/content/</code>. Sistem akan
+          meregenerasi katalog secara otomatis.
+        </p>
       </div>
 
-      {/* Info Banner */}
-      <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 flex items-start gap-3">
-        <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-          <FileText size={15} className="text-amber-400" />
-        </div>
-        <div>
-          <p className="text-amber-300 font-bold text-sm">
-            Manajemen Konten Berbasis File
-          </p>
-          <p className="text-amber-400/70 text-xs mt-1">
-            Artikel dikelola melalui file{" "}
-            <code className="bg-amber-500/20 px-1 rounded">.md</code> di folder{" "}
-            <code className="bg-amber-500/20 px-1 rounded">src/content/</code>.
-            Untuk menambah artikel baru, buat file markdown baru di direktori
-            tersebut. Perubahan akan otomatis muncul setelah deploy.
-          </p>
-        </div>
-      </div>
-
-      {/* Articles Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-          <h2 className="text-white font-bold">Daftar Artikel</h2>
-          <span className="text-slate-500 text-sm">
-            {articles.length} total
-          </span>
-        </div>
+      <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-800 bg-slate-800/30">
-                <th className="text-left text-slate-400 text-xs font-bold uppercase tracking-wider px-6 py-3">
-                  Judul Artikel
-                </th>
-                <th className="text-left text-slate-400 text-xs font-bold uppercase tracking-wider px-6 py-3">
-                  Kategori
-                </th>
-                <th className="text-left text-slate-400 text-xs font-bold uppercase tracking-wider px-6 py-3">
-                  Penulis
-                </th>
-                <th className="text-left text-slate-400 text-xs font-bold uppercase tracking-wider px-6 py-3">
-                  Waktu Baca
-                </th>
-                <th className="text-left text-slate-400 text-xs font-bold uppercase tracking-wider px-6 py-3">
-                  Tanggal
-                </th>
-                <th className="text-left text-slate-400 text-xs font-bold uppercase tracking-wider px-6 py-3">
-                  Aksi
-                </th>
+          <table className="w-full text-sm text-left">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th className="px-6 py-4">Judul Artikel</th>
+                <th className="px-6 py-4">Kategori</th>
+                <th className="px-6 py-4">Penulis</th>
+                <th className="px-6 py-4">Kronologi</th>
+                <th className="px-6 py-4">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50">
+            <tbody className="divide-y divide-slate-100 font-semibold">
               {articles.map((article) => (
                 <tr
                   key={article.slug}
-                  className="hover:bg-slate-800/30 transition-all"
+                  className="hover:bg-slate-50/50 transition-colors"
                 >
-                  {/* Judul */}
                   <td className="px-6 py-4">
-                    <div>
-                      <p className="text-slate-200 text-sm font-semibold">
-                        {article.title}
-                      </p>
-                      <p className="text-slate-500 text-xs mt-0.5 truncate max-w-xs">
-                        {article.summary}
-                      </p>
-                    </div>
+                    <p className="text-slate-900 font-bold line-clamp-1">
+                      {article.title}
+                    </p>
+                    <p className="text-slate-500 text-xs mt-1 line-clamp-1 font-medium">
+                      {article.summary}
+                    </p>
                   </td>
-
-                  {/* Kategori */}
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full border ${
-                        categoryColors[article.category] || categoryColors.Umum
-                      }`}
+                      className={`inline-flex px-3 py-1 border text-[10px] font-black uppercase rounded-lg ${categoryColors[article.category] || "bg-slate-100 border-slate-200 text-slate-600"}`}
                     >
-                      <Tag size={10} />
                       {article.category}
                     </span>
                   </td>
-
-                  {/* Penulis */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-slate-400 text-xs">
-                      <User size={11} />
-                      {article.author}
-                    </div>
+                  <td className="px-6 py-4 text-slate-600">{article.author}</td>
+                  <td className="px-6 py-4 text-slate-500 text-xs">
+                    {new Date(article.date).toLocaleDateString("id-ID")}
                   </td>
-
-                  {/* Waktu Baca */}
-                  <td className="px-6 py-4 text-slate-400 text-xs">
-                    {article.readTime}
-                  </td>
-
-                  {/* Tanggal */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-                      <Clock size={11} />
-                      {formatDate(article.date)}
-                    </div>
-                  </td>
-
-                  {/* Aksi */}
                   <td className="px-6 py-4">
                     <Link
                       href={`/artikel/${article.slug}`}
                       target="_blank"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-bold rounded-lg transition-all w-fit"
+                      className="inline-flex items-center gap-1.5 bg-white border border-slate-200 px-4 py-2 rounded-lg text-xs font-bold text-[#0F52BA] hover:bg-blue-50 transition-colors shadow-sm"
                     >
-                      <ExternalLink size={12} />
-                      Lihat
+                      <ExternalLink size={14} /> Baca
                     </Link>
                   </td>
                 </tr>

@@ -29,63 +29,48 @@ export default function PublicHeader() {
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // State untuk data sesi & profil
   const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Pantau Session & Role secara Realtime
   useEffect(() => {
     const supabase = createClient();
-
-    const fetchUserAndProfile = async (sessionUser: any) => {
+    const fetchUserAndRole = async (sessionUser: any) => {
       if (sessionUser) {
         setUser(sessionUser);
-        // Cek Role di Database Profiles
         const { data } = await supabase
           .from("profiles")
           .select("role")
           .eq("id", sessionUser.id)
           .single();
-        setProfile(data);
+        setIsAdmin(data?.role === "admin");
       } else {
         setUser(null);
-        setProfile(null);
+        setIsAdmin(false);
       }
     };
 
-    // Pengecekan awal saat web dimuat
-    supabase.auth.getUser().then(({ data }) => {
-      fetchUserAndProfile(data.user);
-    });
-
-    // Pengecekan saat terjadi perubahan login/logout
+    supabase.auth.getUser().then(({ data }) => fetchUserAndRole(data.user));
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_, session) => {
-      fetchUserAndProfile(session?.user);
-    });
-
+    } = supabase.auth.onAuthStateChange((_, session) =>
+      fetchUserAndRole(session?.user),
+    );
     return () => subscription.unsubscribe();
   }, []);
 
-  // Smart Header Scroll Logic (Hide on scroll down, show on scroll up)
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setIsScrolled(currentScrollY > 10);
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100 && !mobileOpen) {
+      if (currentScrollY > lastScrollY && currentScrollY > 100 && !mobileOpen)
         setIsHidden(true);
-      } else {
-        setIsHidden(false);
-      }
+      else setIsHidden(false);
       setLastScrollY(currentScrollY);
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY, mobileOpen]);
@@ -95,24 +80,19 @@ export default function PublicHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-transform duration-300 ease-out ${
-        isHidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 transition-transform duration-300 ease-out ${isHidden ? "-translate-y-full" : "translate-y-0"}`}
     >
       <div
-        className={`transition-all duration-300 ${
-          isScrolled
-            ? "glass-nav shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
-            : "bg-transparent py-2"
-        }`}
+        className={`transition-all duration-300 ${isScrolled ? "glass-nav shadow-[0_4px_30px_rgba(0,0,0,0.03)]" : "bg-transparent py-2"}`}
       >
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="group flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#1565C0] to-[#0F52BA] text-white shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-blue-500/25">
+            {/* Logo Bergradien Cyan ke Teal */}
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#00a9d8] to-[#259b9a] text-white shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-[#00a9d8]/30">
               <ShieldCheck size={20} strokeWidth={2.5} />
             </div>
             <div className="min-w-0">
-              <span className="truncate text-[1.1rem] font-black tracking-tight text-slate-900 transition-colors group-hover:text-[#0F52BA]">
+              <span className="truncate text-[1.1rem] font-black tracking-tight text-slate-900 transition-colors group-hover:text-[#00a9d8]">
                 Garda Siber
               </span>
             </div>
@@ -127,35 +107,33 @@ export default function PublicHeader() {
                   href={item.href}
                   className={`relative rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                     active
-                      ? "text-[#0F52BA]"
+                      ? "text-[#00a9d8]"
                       : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
                   }`}
                 >
                   {item.label}
                   {active && (
-                    <span className="absolute bottom-1 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-[#0F52BA] opacity-80" />
+                    <span className="absolute bottom-1 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-[#00a9d8] opacity-80" />
                   )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Conditional Rendering Action Buttons (Desktop) */}
           <div className="hidden lg:flex items-center gap-3">
             {user ? (
               <>
-                {/* Tombol Pintasan Khusus Admin */}
-                {profile?.role === "admin" && (
+                {isAdmin && (
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-2 rounded-[14px] bg-violet-500/10 border border-violet-500/20 px-4 py-2.5 text-sm font-bold text-violet-600 transition-all hover:-translate-y-0.5 hover:bg-violet-500/20 hover:shadow-sm"
+                    className="inline-flex items-center gap-2 rounded-[14px] bg-[#259b9a]/10 border border-[#259b9a]/20 px-4 py-2.5 text-sm font-bold text-[#259b9a] transition-all hover:-translate-y-0.5 hover:bg-[#259b9a]/20 hover:shadow-sm"
                   >
                     <LayoutGrid size={16} /> Admin Panel
                   </Link>
                 )}
                 <Link
                   href="/profil"
-                  className="inline-flex items-center gap-2 rounded-[14px] bg-blue-50 border border-blue-100/50 px-4 py-2.5 text-sm font-bold text-[#0F52BA] transition-all hover:-translate-y-0.5 hover:bg-blue-100 hover:shadow-sm"
+                  className="inline-flex items-center gap-2 rounded-[14px] bg-[#00a9d8]/10 border border-[#00a9d8]/20 px-4 py-2.5 text-sm font-bold text-[#00a9d8] transition-all hover:-translate-y-0.5 hover:bg-[#00a9d8]/20 hover:shadow-sm"
                 >
                   <User size={16} /> Profil Saya
                 </Link>
@@ -164,13 +142,13 @@ export default function PublicHeader() {
               <>
                 <Link
                   href="/quiz"
-                  className="text-sm font-bold text-slate-600 hover:text-[#0F52BA] transition-colors"
+                  className="text-sm font-bold text-slate-600 hover:text-[#00a9d8] transition-colors"
                 >
                   Cek Pengetahuan
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-2 rounded-[14px] bg-[#0F52BA] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 hover:bg-[#0B3F8C] hover:shadow-blue-500/30"
+                  className="inline-flex items-center gap-2 rounded-[14px] bg-[#00a9d8] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#00a9d8]/20 transition-all hover:-translate-y-0.5 hover:bg-[#0d9edf] hover:shadow-[#0d9edf]/30"
                 >
                   Masuk <ArrowRight size={16} />
                 </Link>
@@ -180,7 +158,7 @@ export default function PublicHeader() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 text-slate-600 hover:text-[#0F52BA] transition-colors"
+            className="lg:hidden p-2 text-slate-600 hover:text-[#00a9d8] transition-colors"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -196,32 +174,25 @@ export default function PublicHeader() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-xl px-4 py-3 text-sm font-bold transition-colors ${
-                    isActive(item.href)
-                      ? "bg-blue-50 text-[#0F52BA]"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
+                  className={`rounded-xl px-4 py-3 text-sm font-bold transition-colors ${isActive(item.href) ? "bg-[#00a9d8]/10 text-[#00a9d8]" : "text-slate-600 hover:bg-slate-50"}`}
                 >
                   {item.label}
                 </Link>
               ))}
-
               <div className="border-t border-slate-200 my-3" />
-
-              {/* Conditional Rendering Action Buttons (Mobile) */}
               {user ? (
                 <>
-                  {profile?.role === "admin" && (
+                  {isAdmin && (
                     <Link
                       href="/dashboard"
-                      className="flex items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold text-violet-600 bg-violet-50 transition-colors hover:bg-violet-100 mb-2"
+                      className="flex items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold text-[#259b9a] bg-[#259b9a]/10 transition-colors hover:bg-[#259b9a]/20 mb-2"
                     >
                       <LayoutGrid size={16} /> Dashboard Admin
                     </Link>
                   )}
                   <Link
                     href="/profil"
-                    className="flex items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold text-[#0F52BA] bg-blue-50 transition-colors hover:bg-blue-100"
+                    className="flex items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold text-[#00a9d8] bg-[#00a9d8]/10 transition-colors hover:bg-[#00a9d8]/20"
                   >
                     <User size={16} /> Profil Saya
                   </Link>
@@ -229,7 +200,7 @@ export default function PublicHeader() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold text-white bg-[#0F52BA] transition-colors hover:bg-[#0B3F8C]"
+                  className="flex items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold text-white bg-[#00a9d8] transition-colors hover:bg-[#0d9edf]"
                 >
                   Masuk / Daftar <ArrowRight size={16} />
                 </Link>

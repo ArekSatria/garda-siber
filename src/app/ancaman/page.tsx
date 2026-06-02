@@ -11,16 +11,15 @@ import {
   TriangleAlert,
   Wifi,
 } from "lucide-react";
-
 import Footer from "@/components/Footer";
 import PageLayout from "@/components/PageLayout";
 import { getAllThreats } from "@/data/threats";
 import { getThreatColorStyle } from "@/constants/threats";
 
 export const metadata: Metadata = {
-  title: "Pusat Edukasi Ancaman Siber",
+  title: "Katalog Ancaman Siber",
   description:
-    "Pelajari ancaman digital yang umum ditemui, pahami cara kerjanya, dan kenali langkah pencegahan dasar yang relevan.",
+    "Pelajari ancaman digital yang umum ditemui, pahami cara kerjanya, dan kenali langkah pencegahan dasar.",
 };
 
 type Threat = ReturnType<typeof getAllThreats>[number];
@@ -32,15 +31,12 @@ const ICON_MAP: Record<string, ElementType> = {
   Smartphone,
   Wifi,
 };
-
 function getFallbackIcon(title: string): ElementType {
   const value = title.toLowerCase();
-
   if (value.includes("phishing")) return Mail;
   if (value.includes("wifi")) return Wifi;
   if (value.includes("sim")) return Smartphone;
   if (value.includes("ransom")) return Lock;
-
   return TriangleAlert;
 }
 
@@ -67,38 +63,40 @@ export default function ThreatListPage() {
 
   return (
     <PageLayout>
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-700">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#259b9a]/10 rounded-full blur-[100px] opacity-60 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="max-w-3xl animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#259b9a]/20 bg-[#259b9a]/10 px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-[#259b9a]">
               <ShieldAlert size={14} />
-              Ancaman Siber
+              Katalog Ancaman Siber
             </div>
-
-            <h1 className="mt-5 text-4xl font-black leading-tight text-slate-900 sm:text-5xl">
-              Kenali ancaman digital yang paling sering ditemui
+            <h1 className="mt-6 text-4xl font-black leading-[1.15] text-slate-900 sm:text-5xl tracking-tight">
+              Kenali ancaman digital yang{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#259b9a] to-[#00a9d8]">
+                paling sering ditemui
+              </span>
             </h1>
-
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
+            <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-slate-600">
               Mempelajari ancaman digital bukan untuk menakut-nakuti, tetapi
-              untuk membantu pengguna lebih siap, lebih waspada, dan lebih tepat
-              mengambil langkah pencegahan.
+              untuk membantu pengguna lebih siap, waspada, dan tepat mengambil
+              langkah pencegahan.
             </p>
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid gap-6 md:grid-cols-3 animate-fade-in-up delay-100">
             {PRINCIPLES.map((item, index) => (
               <div
                 key={item.title}
-                className="rounded-[28px] border border-slate-200 bg-slate-50 p-6"
+                className="rounded-[2rem] border border-slate-200/80 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-[#00a9d8]/30 group"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-sm font-black text-[#0F52BA]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#00a9d8]/10 text-lg font-black text-[#00a9d8] group-hover:bg-[#00a9d8] group-hover:text-white transition-colors">
                   0{index + 1}
                 </div>
-                <h2 className="mt-5 text-xl font-black text-slate-900">
+                <h2 className="mt-6 text-xl font-black text-slate-900 tracking-tight">
                   {item.title}
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600">
                   {item.description}
                 </p>
               </div>
@@ -107,26 +105,24 @@ export default function ThreatListPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-slate-500">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between animate-fade-in-up delay-100">
+          <div className="text-sm font-medium text-slate-500">
             Tersedia{" "}
             <span className="font-bold text-slate-700">
               {allThreats.length}
             </span>{" "}
             topik ancaman untuk dipelajari.
           </div>
-
           <Link
             href="/artikel"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA]"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#00a9d8] hover:text-[#0d9edf] transition-colors"
           >
-            Lanjut ke materi edukasi
-            <ChevronRight size={16} />
+            Lanjut ke materi edukasi <ChevronRight size={16} />
           </Link>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3 animate-fade-in-up delay-200">
           {allThreats.map((threat: Threat) => {
             const colorStyle = getThreatColorStyle(threat.color);
             const Icon =
@@ -136,48 +132,43 @@ export default function ThreatListPage() {
               <Link
                 key={threat.id}
                 href={`/ancaman/${threat.id}`}
-                className="group overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                className="group overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_4px_20px_-4px_rgba(15,23,42,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#259b9a]/30"
               >
-                <div className="h-52 w-full overflow-hidden bg-slate-100">
+                <div className="relative h-52 w-full overflow-hidden bg-slate-100">
                   {threat.image ? (
                     <img
                       src={threat.image}
                       alt={threat.title}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400">
+                    <div className="flex h-full w-full items-center justify-center text-slate-300">
                       <ShieldAlert size={30} />
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-
-                <div className="p-6">
-                  <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="p-8">
+                  <div className="mb-5 flex items-center justify-between gap-3">
                     <div
-                      className={`inline-flex rounded-2xl p-3 ${colorStyle.cardBg}`}
+                      className={`inline-flex rounded-[14px] p-3 transition-colors ${colorStyle.cardBg}`}
                     >
-                      <Icon size={18} />
+                      <Icon size={20} />
                     </div>
-
                     <span
-                      className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${colorStyle.badgeClass}`}
+                      className={`rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-sm ${colorStyle.badgeClass}`}
                     >
                       {threat.level}
                     </span>
                   </div>
-
-                  <h2 className="text-xl font-black leading-tight text-slate-900">
+                  <h2 className="text-xl font-black leading-tight text-slate-900 tracking-tight group-hover:text-[#259b9a] transition-colors">
                     {threat.title}
                   </h2>
-
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                  <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600">
                     {threat.shortDesc}
                   </p>
-
-                  <div className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#0F52BA] transition group-hover:gap-3">
-                    Pelajari ancaman
-                    <ChevronRight size={16} />
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#259b9a] transition-transform group-hover:translate-x-1">
+                    Pelajari ancaman <ChevronRight size={16} />
                   </div>
                 </div>
               </Link>
@@ -185,47 +176,6 @@ export default function ThreatListPage() {
           })}
         </div>
       </section>
-
-      <section className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-[linear-gradient(135deg,#FFF9ED_0%,#FFFFFF_55%,#F8FAFC_100%)] p-8 shadow-sm sm:p-10">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-700">
-                <TriangleAlert size={14} />
-                Ingat
-              </div>
-
-              <h2 className="mt-5 text-3xl font-black leading-tight text-slate-900 sm:text-4xl">
-                Ancaman digital lebih mudah dicegah jika dikenali lebih awal
-              </h2>
-
-              <p className="mt-4 text-sm leading-8 text-slate-600 sm:text-base">
-                Biasakan memeriksa tautan, file, aplikasi, dan permintaan
-                informasi yang tidak biasa. Semakin cepat pola ancaman dikenali,
-                semakin kecil risiko kerugian yang bisa terjadi.
-              </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/artikel"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0F52BA] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#0B3F8C]"
-                >
-                  Jelajahi Materi
-                  <ChevronRight size={16} />
-                </Link>
-
-                <Link
-                  href="/quiz"
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                >
-                  Cek Pengetahuan
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <Footer />
     </PageLayout>
   );

@@ -11,9 +11,8 @@ import {
   Shield,
   LogOut,
   ChevronRight,
-  Settings,
   BarChart3,
-  AlertTriangle,
+  Globe,
 } from "lucide-react";
 
 interface Props {
@@ -45,103 +44,99 @@ export default function AdminSidebar({ adminName }: Props) {
   }
 
   return (
-    <aside className="w-72 h-screen bg-[#050A15] border-r border-white/5 flex flex-col shrink-0 relative overflow-hidden">
-      {/* Subtle Glow Background */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-violet-600/10 blur-[80px] pointer-events-none" />
-
-      {/* Brand */}
-      <div className="p-6 lg:p-8 border-b border-white/5 relative z-10">
-        <Link href="/dashboard" className="flex items-center gap-4 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.3)] group-hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] transition-all duration-300">
-            <Shield size={20} className="text-white" />
+    <aside className="w-[280px] h-screen bg-white border-r border-slate-200 flex flex-col shrink-0 relative z-20">
+      {/* Brand Header */}
+      <div className="h-20 flex items-center px-6 border-b border-slate-100">
+        <Link href="/dashboard" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#f4af1b] to-[#ffd55a] rounded-xl flex items-center justify-center shadow-sm">
+            <Shield size={20} className="text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-white font-black text-base tracking-tight leading-none">
-              GARDA SIBER
+            <p className="text-slate-900 font-black text-base tracking-tight leading-none">
+              Garda Siber
             </p>
-            <p className="text-violet-400 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-1">
               Command Center
             </p>
           </div>
         </Link>
       </div>
 
-      {/* Admin badge */}
-      <div className="mx-6 mt-6 px-4 py-3 bg-white/[0.03] border border-white/5 rounded-2xl flex items-center gap-3 relative z-10 backdrop-blur-sm">
-        <div className="w-8 h-8 bg-violet-500/20 rounded-xl flex items-center justify-center shadow-inner">
-          <AlertTriangle size={14} className="text-violet-400" />
-        </div>
-        <div className="min-w-0">
-          <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
-            Administrator
-          </p>
-          <p className="text-slate-200 text-sm font-bold truncate">
-            {adminName}
-          </p>
+      {/* Admin Profile Box */}
+      <div className="px-5 pt-6 pb-2">
+        <div className="bg-[#F8FAFC] border border-slate-200/60 rounded-2xl p-3 flex items-center gap-3">
+          <div className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+            <span className="text-[#66d47e] font-black text-sm">
+              {adminName.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div className="overflow-hidden flex-1">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+              Administrator
+            </p>
+            <p className="text-sm font-bold text-slate-800 truncate leading-none">
+              {adminName}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto relative z-10 custom-scrollbar">
-        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.15em] px-4 pb-3">
-          Sistem Utama
+      {/* Navigation Links */}
+      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+        <p className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pb-2 pt-2">
+          Sistem Navigasi
         </p>
+
         {navItems.map((item) => {
           const active = isActive(item.href, item.exact);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300 group relative overflow-hidden ${
+              className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-xs font-bold transition-all duration-200 relative group ${
                 active
-                  ? "text-white bg-violet-500/10 border border-violet-500/20 shadow-[inset_0_0_20px_rgba(139,92,246,0.05)]"
-                  : "text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent"
+                  ? "text-[#f4af1b] bg-orange-50/50"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
               {active && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-violet-500 rounded-r-full shadow-[0_0_10px_rgba(139,92,246,0.8)]" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#f4af1b] rounded-r-full" />
               )}
               <item.icon
                 size={18}
                 className={
                   active
-                    ? "text-violet-400"
-                    : "text-slate-500 group-hover:text-slate-300 transition-colors"
+                    ? "text-[#f4af1b]"
+                    : "text-slate-400 group-hover:text-slate-600"
                 }
               />
-              <span className="relative z-10">{item.label}</span>
+              <span className="text-[13px]">{item.label}</span>
               {active && (
-                <ChevronRight
-                  size={14}
-                  className="ml-auto text-violet-400/50"
-                />
+                <ChevronRight size={14} className="ml-auto text-orange-300" />
               )}
             </Link>
           );
         })}
 
-        <div className="border-t border-white/5 my-6 mx-2" />
-        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.15em] px-4 pb-3">
-          Akses Eksternal
-        </p>
+        <div className="border-t border-slate-100 my-4 mx-3" />
 
         <Link
           href="/"
-          className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-semibold text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-all border border-transparent"
+          className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all"
         >
-          <Shield size={18} className="text-slate-500" />
-          <span>Lihat Website Publik</span>
+          <Globe size={18} className="text-slate-400" />
+          <span>Lihat Web Publik</span>
         </Link>
       </nav>
 
-      {/* Logout */}
-      <div className="p-6 border-t border-white/5 relative z-10 bg-gradient-to-t from-[#050A15] to-transparent">
+      {/* Session Termination */}
+      <div className="p-5 border-t border-slate-100 bg-slate-50/50">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl text-sm font-bold text-red-400 bg-red-500/5 border border-red-500/10 hover:bg-red-500/15 hover:text-red-300 transition-all shadow-sm"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs font-bold text-red-600 bg-white border border-red-100 hover:bg-red-50 transition-all shadow-sm"
         >
           <LogOut size={16} />
-          <span>Akhiri Sesi Admin</span>
+          <span>Keluar Sesi Admin</span>
         </button>
       </div>
     </aside>

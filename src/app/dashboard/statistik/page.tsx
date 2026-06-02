@@ -2,37 +2,26 @@ import { createClient } from "@/lib/supabase/server";
 import { getLatestArticles } from "@/lib/articles";
 import { getAllThreats } from "@/data/threats";
 import type { Metadata } from "next";
-import { BarChart3, PieChart, Activity, TrendingUp } from "lucide-react";
+import { BarChart3, PieChart, Activity, Tag, Shield } from "lucide-react";
 
-export const metadata: Metadata = { title: "Statistik" };
+export const metadata: Metadata = { title: "Analitik Statistik Siber" };
 
 export default async function StatistikPage() {
   const supabase = await createClient();
 
-  const [
-    { count: totalUsers },
-    { count: adminCount },
-    { count: totalQuiz },
-    { data: quizResults },
-    { data: userGrowth },
-  ] = await Promise.all([
-    supabase.from("profiles").select("*", { count: "exact", head: true }),
-    supabase
-      .from("profiles")
-      .select("*", { count: "exact", head: true })
-      .eq("role", "admin"),
-    supabase.from("quiz_results").select("*", { count: "exact", head: true }),
-    supabase.from("quiz_results").select("score, total, label, created_at"),
-    supabase
-      .from("profiles")
-      .select("created_at")
-      .order("created_at", { ascending: true }),
-  ]);
+  const [{ count: totalQuiz }, { data: quizResults }, { data: userGrowth }] =
+    await Promise.all([
+      supabase.from("quiz_results").select("*", { count: "exact", head: true }),
+      supabase.from("quiz_results").select("score, total, label, created_at"),
+      supabase
+        .from("profiles")
+        .select("created_at")
+        .order("created_at", { ascending: true }),
+    ]);
 
   const articles = getLatestArticles();
   const threats = getAllThreats();
 
-  // Score distribution
   const distribution = {
     excellent:
       quizResults?.filter((r) => (r.score / r.total) * 100 >= 80).length ?? 0,
@@ -45,7 +34,6 @@ export default async function StatistikPage() {
       quizResults?.filter((r) => (r.score / r.total) * 100 < 60).length ?? 0,
   };
 
-  // Monthly user growth (6 bulan terakhir)
   const now = new Date();
   const monthlyData = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
@@ -55,15 +43,10 @@ export default async function StatistikPage() {
         const created = new Date(u.created_at);
         return created >= d && created < next;
       }).length ?? 0;
-    return {
-      label: d.toLocaleDateString("id-ID", { month: "short" }),
-      count,
-    };
+    return { label: d.toLocaleDateString("id-ID", { month: "short" }), count };
   });
 
   const maxMonthly = Math.max(...monthlyData.map((m) => m.count), 1);
-
-  // Article categories
   const catStats = Array.from(new Set(articles.map((a) => a.category))).map(
     (cat) => ({
       label: cat,
@@ -71,110 +54,65 @@ export default async function StatistikPage() {
     }),
   );
 
-  // Threat levels
-  const threatLevels = ["Critical", "High", "Medium", "Low"].map((lvl) => ({
-    label: lvl,
-    count: threats.filter((t) => t.level === lvl).length,
-    color:
-      lvl === "Critical"
-        ? "bg-rose-500"
-        : lvl === "High"
-          ? "bg-orange-500"
-          : lvl === "Medium"
-            ? "bg-amber-500"
-            : "bg-emerald-500",
-  }));
+  const threatLevels = [
+    {
+      label: "Critical",
+      count: threats.filter((t) => t.level === "Critical").length,
+      color: "bg-rose-500",
+    },
+    {
+      label: "High",
+      count: threats.filter((t) => t.level === "High").length,
+      color: "bg-[#f4af1b]",
+    },
+    {
+      label: "Medium",
+      count: threats.filter((t) => t.level === "Medium").length,
+      color: "bg-[#ffd55a]",
+    },
+    {
+      label: "Low",
+      count: threats.filter((t) => t.level === "Low").length,
+      color: "bg-[#66d47e]",
+    },
+  ];
 
   const maxThreat = Math.max(...threatLevels.map((t) => t.count), 1);
-  const memberCount = (totalUsers ?? 0) - (adminCount ?? 0);
 
   return (
-    <div className="p-8 space-y-6 min-h-screen">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black text-white">Statistik</h1>
-        <p className="text-slate-400 text-sm mt-1">
-          Analisis data dan performa platform Garda Siber
+    <div className="p-6 lg:p-10 space-y-6 min-h-screen bg-[#F8FAFC]">
+      <div className="border-b border-slate-200 pb-6">
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          Pusat Analitik
+        </h1>
+        <p className="text-slate-500 text-sm mt-1">
+          Metrik performa, sebaran data edukasi, dan penetrasi pemahaman user.
         </p>
       </div>
 
-      {/* Top KPIs */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          {
-            label: "Total User",
-            value: totalUsers ?? 0,
-            color: "text-blue-400",
-            bg: "bg-blue-500/20",
-          },
-          {
-            label: "Member Aktif",
-            value: memberCount,
-            color: "text-emerald-400",
-            bg: "bg-emerald-500/20",
-          },
-          {
-            label: "Total Quiz",
-            value: totalQuiz ?? 0,
-            color: "text-violet-400",
-            bg: "bg-violet-500/20",
-          },
-          {
-            label: "Konten Total",
-            value: articles.length + threats.length,
-            color: "text-amber-400",
-            bg: "bg-amber-500/20",
-          },
-        ].map((k) => (
-          <div
-            key={k.label}
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-5"
-          >
-            <div
-              className={`w-9 h-9 ${k.bg} rounded-xl flex items-center justify-center mb-3`}
-            >
-              <TrendingUp size={16} className={k.color} />
-            </div>
-            <p className={`text-3xl font-black ${k.color}`}>{k.value}</p>
-            <p className="text-slate-400 text-xs font-semibold mt-1">
-              {k.label}
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+        {/* Chart 1: Registrasi Grafik Batang */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-8 border-b border-slate-100 pb-4">
+            <Activity size={18} className="text-[#66d47e]" />
+            <h2 className="text-sm font-bold text-slate-800">
+              Pertumbuhan Pengguna Baru
+            </h2>
           </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 gap-6">
-        {/* User Growth Chart */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <Activity size={15} className="text-blue-400" />
-            </div>
-            <h2 className="text-white font-bold">Pertumbuhan Pengguna</h2>
-            <span className="text-slate-500 text-xs ml-auto">
-              6 bulan terakhir
-            </span>
-          </div>
-          <div className="flex items-end gap-3 h-36">
+          <div className="flex items-end gap-4 h-48 pt-4">
             {monthlyData.map((m, i) => (
-              <div
-                key={i}
-                className="flex-1 flex flex-col items-center gap-1.5"
-              >
-                <span className="text-slate-400 text-xs font-bold">
+              <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                <span className="text-slate-700 text-xs font-black">
                   {m.count}
                 </span>
                 <div
-                  className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all"
+                  className="w-full bg-[#66d47e] rounded-t-md opacity-90 transition-all hover:opacity-100"
                   style={{
-                    height: `${Math.max(
-                      (m.count / maxMonthly) * 100,
-                      m.count > 0 ? 8 : 3,
-                    )}%`,
-                    minHeight: m.count > 0 ? "8px" : "3px",
+                    height: `${(m.count / maxMonthly) * 120}px`,
+                    minHeight: m.count > 0 ? "4px" : "1px",
                   }}
                 />
-                <span className="text-slate-500 text-[10px] font-semibold">
+                <span className="text-slate-400 text-[10px] font-bold uppercase">
                   {m.label}
                 </span>
               </div>
@@ -182,52 +120,50 @@ export default async function StatistikPage() {
           </div>
         </div>
 
-        {/* Quiz Score Distribution */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-8 h-8 bg-violet-500/20 rounded-lg flex items-center justify-center">
-              <PieChart size={15} className="text-violet-400" />
-            </div>
-            <h2 className="text-white font-bold">Distribusi Skor Quiz</h2>
+        {/* Chart 2: Distribusi Skor */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-8 border-b border-slate-100 pb-4">
+            <PieChart size={18} className="text-[#f4af1b]" />
+            <h2 className="text-sm font-bold text-slate-800">
+              Sebaran Akurasi Evaluasi
+            </h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {[
               {
                 label: "Sangat Baik (≥80%)",
                 count: distribution.excellent,
-                color: "bg-emerald-500",
-                textColor: "text-emerald-400",
+                color: "bg-[#66d47e]",
+                text: "text-[#66d47e]",
               },
               {
-                label: "Cukup (60–79%)",
+                label: "Cukup Baik (60-79%)",
                 count: distribution.good,
-                color: "bg-blue-500",
-                textColor: "text-blue-400",
+                color: "bg-[#ffd55a]",
+                text: "text-amber-500",
               },
               {
-                label: "Perlu Belajar (<60%)",
+                label: "Perlu Evaluasi (<60%)",
                 count: distribution.poor,
                 color: "bg-rose-500",
-                textColor: "text-rose-400",
+                text: "text-rose-500",
               },
-            ].map((d) => {
-              const pct =
-                (totalQuiz ?? 0) > 0
-                  ? Math.round((d.count / (totalQuiz ?? 1)) * 100)
-                  : 0;
+            ].map((d, i) => {
+              const totalQ = totalQuiz ?? 1;
+              const pct = Math.round(
+                (d.count / (totalQ === 0 ? 1 : totalQ)) * 100,
+              );
               return (
-                <div key={d.label}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-slate-400 text-xs font-semibold">
-                      {d.label}
-                    </span>
-                    <span className={`text-xs font-black ${d.textColor}`}>
-                      {d.count} ({pct}%)
+                <div key={i}>
+                  <div className="flex justify-between text-xs mb-2 font-bold">
+                    <span className="text-slate-600">{d.label}</span>
+                    <span className={`${d.text} font-black`}>
+                      {d.count} Sesi ({pct}%)
                     </span>
                   </div>
-                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div
-                      className={`h-full ${d.color} rounded-full transition-all`}
+                      className={`h-full ${d.color}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -237,35 +173,31 @@ export default async function StatistikPage() {
           </div>
         </div>
 
-        {/* Article Category Breakdown */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-              <BarChart3 size={15} className="text-emerald-400" />
-            </div>
-            <h2 className="text-white font-bold">Artikel per Kategori</h2>
+        {/* Chart 3: Repositori Artikel */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
+            <Tag size={18} className="text-[#ffd55a]" />
+            <h2 className="text-sm font-bold text-slate-800">
+              Kategori Artikel
+            </h2>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {catStats
               .sort((a, b) => b.count - a.count)
-              .map((cat) => {
-                const pct = Math.round(
-                  (cat.count / Math.max(...catStats.map((c) => c.count), 1)) *
-                    100,
-                );
+              .map((cat, i) => {
+                const maxCat = Math.max(...catStats.map((c) => c.count), 1);
+                const pct = Math.round((cat.count / maxCat) * 100);
                 return (
-                  <div key={cat.label}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-slate-400 text-xs font-semibold">
-                        {cat.label}
-                      </span>
-                      <span className="text-emerald-400 text-xs font-black">
-                        {cat.count}
+                  <div key={i}>
+                    <div className="flex justify-between text-xs mb-1.5 font-bold">
+                      <span className="text-slate-600">{cat.label}</span>
+                      <span className="text-[#ffd55a] font-black">
+                        {cat.count} Berkas
                       </span>
                     </div>
-                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+                        className="h-full bg-[#ffd55a] rounded-full"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -275,33 +207,28 @@ export default async function StatistikPage() {
           </div>
         </div>
 
-        {/* Threat Level Breakdown */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-8 h-8 bg-rose-500/20 rounded-lg flex items-center justify-center">
-              <BarChart3 size={15} className="text-rose-400" />
-            </div>
-            <h2 className="text-white font-bold">Ancaman per Level</h2>
+        {/* Chart 4: Klasifikasi Ancaman */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-8 border-b border-slate-100 pb-4">
+            <Shield size={18} className="text-rose-500" />
+            <h2 className="text-sm font-bold text-slate-800">
+              Matrikulasi Tingkat Ancaman
+            </h2>
           </div>
-          <div className="flex items-end gap-4 h-28">
-            {threatLevels.map((t) => (
-              <div
-                key={t.label}
-                className="flex-1 flex flex-col items-center gap-1.5"
-              >
-                <span className="text-slate-300 text-xs font-bold">
+          <div className="flex items-end gap-4 h-36 pt-2">
+            {threatLevels.map((t, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                <span className="text-slate-700 text-xs font-black">
                   {t.count}
                 </span>
                 <div
-                  className={`w-full ${t.color} rounded-t-lg`}
+                  className={`w-full ${t.color} rounded-t-md opacity-90 hover:opacity-100 transition-all`}
                   style={{
-                    height: `${Math.max(
-                      (t.count / maxThreat) * 80,
-                      t.count > 0 ? 8 : 3,
-                    )}px`,
+                    height: `${(t.count / maxThreat) * 100}px`,
+                    minHeight: t.count > 0 ? "4px" : "1px",
                   }}
                 />
-                <span className="text-slate-500 text-[9px] font-bold text-center">
+                <span className="text-slate-500 text-[10px] font-bold uppercase">
                   {t.label}
                 </span>
               </div>

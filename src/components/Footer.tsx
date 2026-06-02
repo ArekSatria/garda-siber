@@ -24,10 +24,9 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.45fr_1fr_1fr_1.2fr]">
           <div>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0F52BA] text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00a9d8] to-[#259b9a] text-white shadow-md">
                 <ShieldCheck size={22} />
               </div>
-
               <div>
                 <h2 className="text-lg font-black text-slate-900">
                   Garda Siber
@@ -37,14 +36,12 @@ export default function Footer() {
                 </p>
               </div>
             </div>
-
-            <p className="mt-5 max-w-md text-sm leading-7 text-slate-600">
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-slate-600 font-medium">
               Platform edukasi yang membantu masyarakat memahami ancaman
               digital, langkah pencegahan dasar, dan kebiasaan keamanan siber
-              yang lebih baik dalam aktivitas sehari-hari.
+              yang lebih baik.
             </p>
-
-            <div className="mt-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#0F52BA]">
+            <div className="mt-5 inline-flex rounded-full border border-[#00a9d8]/20 bg-[#00a9d8]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#00a9d8]">
               Project edukasi
             </div>
           </div>
@@ -58,7 +55,7 @@ export default function Footer() {
                 <Link
                   key={item.href + item.label}
                   href={item.href}
-                  className="text-sm font-medium text-slate-600 transition hover:text-[#0F52BA]"
+                  className="text-sm font-medium text-slate-500 transition hover:text-[#00a9d8]"
                 >
                   {item.label}
                 </Link>
@@ -75,7 +72,7 @@ export default function Footer() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="text-sm font-medium text-slate-600 transition hover:text-[#0F52BA]"
+                  className="text-sm font-medium text-slate-500 transition hover:text-[#00a9d8]"
                 >
                   {item.label}
                 </Link>
@@ -87,36 +84,26 @@ export default function Footer() {
             <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-900">
               Informasi
             </h3>
-
             <div className="mt-4 space-y-4">
-              <div className="flex items-start gap-3 text-sm text-slate-600">
-                <MapPin size={18} className="mt-0.5 text-[#0F52BA]" />
+              <div className="flex items-start gap-3 text-sm text-slate-600 font-medium">
+                <MapPin size={18} className="mt-0.5 text-[#259b9a] shrink-0" />
                 <p>
                   Dikembangkan dalam konteks project magang untuk mendukung
                   literasi keamanan digital.
                 </p>
               </div>
-
-              <div className="flex items-start gap-3 text-sm text-slate-600">
-                <Mail size={18} className="mt-0.5 text-[#0F52BA]" />
+              <div className="flex items-start gap-3 text-sm text-slate-600 font-medium">
+                <Mail size={18} className="mt-0.5 text-[#00a9d8] shrink-0" />
                 <p>
-                  Pastikan kontak, afiliasi, dan identitas institusional yang
-                  ditampilkan sesuai arahan pihak terkait.
+                  Pastikan kontak dan identitas institusional yang ditampilkan
+                  sesuai arahan pihak terkait.
                 </p>
               </div>
-            </div>
-
-            <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs leading-6 text-slate-500">
-                Konten pada website ini bersifat edukatif dan preventif. Gunakan
-                bahasa, klaim, dan informasi yang tetap aman secara
-                institusional saat dipresentasikan.
-              </p>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-xs font-semibold text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Garda Siber. Seluruh hak cipta dilindungi.</p>
           <p>
             Dirancang agar pembelajaran keamanan digital terasa lebih jelas dan
